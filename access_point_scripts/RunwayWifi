@@ -1,0 +1,43 @@
+#!/bin/bash
+NETWORKDIR=/etc/network
+
+howto="Usage: RunwayWifi home/playa"
+E_NOARGS=77
+E_BADARGS=78
+
+
+if [ ! -d $NETWORKDIR ]
+  then
+    echo "No $NETWORKDIR found - maybe this isn't a pi?"
+    echo "Exiting"
+    exit 1
+fi
+
+if [ -n "$1" ]
+then
+  args=$1
+  if [ $args == "home" ]
+  then
+    echo "HOME MODE"
+    cp "$PWD/RunwayWifiConfigs/interfaces.home" $NETWORKDIR/interfaces
+  elif [ $args == "playa" ]
+  then
+    echo "PLAYA MODE"
+    cp "$PWD/RunwayWifiConfigs/interfaces.playa" $NETWORKDIR/interfaces
+  else
+    echo "ERROR! Unknown mode: " $args
+    echo $howto
+    exit $E_BADARGS
+  fi
+else
+  echo "NOTE: No mode specified. Here's the current interfaces:"
+  echo
+  more $DIR/interfaces
+  echo
+  echo "NOTE: If you want to switch modes..."
+  echo $howto
+  exit $E_NOARGS
+fi
+
+more $DIR/interfaces
+echo "done"

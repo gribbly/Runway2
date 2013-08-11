@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+
+<meta charset="utf-8" />
+
+<title>Runway Lights</title>
+
+<script language="javascript" type="text/javascript">
+
+
+  function init()
+  {
+	document.myform.inputtext.value = "pattern=4"
+	document.myform.disconnectButton.disabled = true;
+  }
+
+  function doConnect()
+  {
+    writeToScreen("attempting to connect to HOME pi\n");
+    websocket = new WebSocket("ws://raspberrypi.local:8000/");
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+  }
+  
+  function doConnect2()
+  {
+    writeToScreen("attempting to connect to PLAYA pi\n");
+    websocket = new WebSocket("ws://10.0.0.1:8000/");
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+  }  
+
+  function onOpen(evt)
+  {
+    writeToScreen("connected\n");
+	document.myform.connectButton.disabled = true;
+	document.myform.connectButton2.disabled = true;
+	document.myform.disconnectButton.disabled = false;
+  }
+
+  function onClose(evt)
+  {
+    writeToScreen("disconnected\n");
+	document.myform.connectButton.disabled = false;
+	document.myform.connectButton2.disabled = false;
+	document.myform.disconnectButton.disabled = true;
+  }
+
+  function onMessage(evt)
+  {
+    writeToScreen("response: " + evt.data + '\n');
+  }
+
+  function onError(evt)
+  {
+    writeToScreen('error: ' + evt.data + '\n');
+
+	websocket.close();
+
+	document.myform.connectButton.disabled = false;
+	document.myform.connectButton2.disabled = false;
+	document.myform.disconnectButton.disabled = true;
+
+  }
+
+  function doSend(message)
+  {
+    writeToScreen("sent: " + message + '\n'); 
+    websocket.send(message);
+  }
+
+  function writeToScreen(message)
+  {
+    document.myform.outputtext.value += message
+	document.myform.outputtext.scrollTop = document.myform.outputtext.scrollHeight;
+
+  }
+
+  window.addEventListener("load", init, false);
+
+
+   function sendText() {
+		doSend( document.myform.inputtext.value );
+   }
+
+  function clearText() {
+		document.myform.outputtext.value = "";
+   }
+
+   function doDisconnect() {
+		websocket.close();
+   }
+
+
+</script>
+
+<div id="output"></div>
+
+<form name="myform">
+<p>
+<textarea name="outputtext" rows="20" cols="50"></textarea>
+</p>
+<p>
+<textarea name="inputtext" cols="50"></textarea>
+</p>
+<p>
+<input type="button" name=pattern1 value="Off" onClick="doSend('pattern=0');">
+<input type="button" name=pattern1 value="Random" onClick="doSend('pattern=1');">
+<input type="button" name=pattern4 value="Cylon" onClick="doSend('pattern=4');">
+<input type="button" name=pattern6 value="Lightning" onClick="doSend('pattern=6');">
+<input type="button" name=pattern6 value="Water" onClick="doSend('pattern=8');">
+</p>
+<p>
+<input type="button" name=tick_fast value="Fast" onClick="doSend('tick=0.01');">
+<input type="button" name=tick_medium value="Med" onClick="doSend('tick=0.1');">
+<input type="button" name=tick_slow value="Slow" onClick="doSend('tick=1.0');">
+</p>
+<p>
+<input type="button" name=sendButton value="Send" onClick="sendText();">
+<input type="button" name=clearButton value="Clear" onClick="clearText();">
+<input type="button" name=disconnectButton value="Disconnect" onClick="doDisconnect();">
+<input type="button" name=connectButton value="home" onClick="doConnect();">
+<input type="button" name=connectButton2 value="playa" onClick="doConnect2();">
+</p>
+
+
+</form>
+</html> 

@@ -1,7 +1,16 @@
-1376250279.3: HELLO WORLD @ 1376250279.3
-1376250279.3: starting in REAL mode
-1376250279.31: fixedTick is 0.0166666666667
-1376250279.31: adjustableTick is 1.0
-1376250279.31: pattern is 1
-1376250279.31: we have 294 ws2801 nodes
-1376250279.31: clear strip @ 1376250279.31
+1376468184.47: HELLO WORLD @ 1376468184.47
+1376468184.47: starting in REAL mode
+1376468184.48: starting SuperSimple.py @ 1376468184.48
+1376468184.51: started SuperSimple.py @ 1376468184.51
+1376468184.51: fixedTick is 0.0166666666667
+1376468184.51: adjustableTick is 1.0
+1376468184.51: pattern is 4
+1376468184.52: we have 294 ws2801 nodes
+1376468184.52: clear strip @ 1376468184.52
+1376468184.9: creating node array [294 nodes total]
+1376468184.9: Map contains 252 light nodes...
+1376468184.9: Map contains 40 flame nodes...
+1376468184.91: Left side has 126 light nodes...
+1376468184.91: Right side has 126 light nodes...
+1376468184.91: Left side has 20 flame nodes...
+1376468184.91: Right side has 20 flame nodes...

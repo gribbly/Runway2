@@ -12,9 +12,13 @@ sharedNextTick = 0.01
 
 pixelTuple = [255,255,255]
 pixelBlue = [0,255,0]
+pixelRed = [255,0,0]
+pixelGreen = [0,0,255]
 
-specificOffTime = 1.0
-specificOnTime = 0.001
+specificOffTime = 0.5
+specificOnTime = 2.0
+#specificOnTime = 0.05 #nice! (could poof this fast too)
+#specificOnTime = 0.02 #perfect for most things
 
 def resetSharedVars():
 	global sharedBool
@@ -56,7 +60,7 @@ def randomString(ledStrip):
 		if randint(0,1) == 0:
 			ledStrip.setPixel(i, [0, 0, 0])
 		else:
-			ledStrip.setPixel(i, pixelTuple)
+			ledStrip.setPixel(i, pixelBlue)
 
 def randomPoint(ledStrip):
 	p = randint(0, ledStrip.nLeds)
@@ -144,7 +148,7 @@ def watery(ledStrip, intensity):
 		p = abs(p) * intensity
 		p = int(p)
 		#print p
-		ledStrip.setPixel(i,[p, p, p])
+		ledStrip.setPixel(i,[p,0,p])
 
 def blueWatery(ledStrip, intensity):
 	t = time.clock()
@@ -207,9 +211,50 @@ def blinkSpecific(ledStrip, node):
 			else:
 				ledStrip.setPixel(i, [0, 0, 0])
 
+def blinkSpecificAll(ledStrip):
+	global sharedBool
+	global sharedNextTick
+	b = sharedBool
+	if time.time() > sharedNextTick:
+		print "tick " + format(b)
+		
+		for i in range(0, ledStrip.nLeds):
+			if b == True:
+				ledStrip.setPixel(i,pixelTuple)
+				sharedBool = False
+				sharedNextTick = time.time() + specificOnTime
+			else:
+				ledStrip.setPixel(i, [0, 0, 0])
+				sharedBool = True
+				sharedNextTick = time.time() + specificOffTime
+
+def chaseSpecific(ledStrip):
+	global sharedBool
+	global sharedNextTick
+	global sharedIndex
+	b = sharedBool
+	j = sharedIndex
+	if time.time() > sharedNextTick:
+		#print "tick " + format(b)
+		
+		for i in range(0, ledStrip.nLeds):
+			if b == True:
+				if i == j:
+					ledStrip.setPixel(i,pixelTuple)
+					sharedBool = False
+					sharedNextTick = time.time() + specificOnTime
+					sharedIndex += 1
+					if sharedIndex > ledStrip.nLeds - 1:
+						sharedIndex = 0
+			else:
+				ledStrip.setPixel(i, [0, 0, 0])
+				sharedBool = True
+				sharedNextTick = time.time() + specificOffTime
+
+
 def allOn(ledStrip):
 	for i in range(0, ledStrip.nLeds):
-		ledStrip.setPixel(i, pixelTuple)
+		ledStrip.setPixel(i, pixelBlue)
 
 def manualControl(ledStrip, light):
 	for i in range(0, ledStrip.nLeds):

@@ -1,16 +1,17 @@
-#attempt 5 - using queues... original source here:
-#http://stackoverflow.com/questions/375427/non-blocking-read-on-a-subprocess-pipe-in-python/437888#437888
-
 #tweaks
-nodes = 294
-startPattern = 0 #starting pattern
-blinkNode = 268 #for debugging with pattern 11
+nodes = 294 #should be 294
+useRunwayControl = True #should be True
+camTestRig = False #should be False
+fakeMode = False #should be False
+noServer = False #should be False
+
+#will be deprecated (not used by RunwayControl)
+startPattern = 1 #starting pattern... should be 3
+blinkNode = 62 #for debugging with pattern 11
 bpm = 120 #default bpm (not used)
 adjustableTick = 1.0 #starting value
 
-fakeMode = False
-noServer = True
-useRunwayControl = False
+#leave this shit alone
 manualLight = -1
 fixedTick = 0.01666666666667 #60fps
 #fixedTick = 0.03333333333333 #30fps
@@ -63,12 +64,10 @@ if len(sys.argv) > 1:
 		pattern = int(sys.argv[1])
 	except:
 		log_event('WARNING! Bad pattern arg {0}'.format(sys.argv[1]))
-if useRunwayControl == True:
-	pattern = -1
 
 if noServer == False:
 	log_event('starting SuperSimple.py @ {0}'.format(time.time()))
-	p = Popen(['/home/pi/Flasher4/SuperSimple.py'], stdout=PIPE, bufsize=1, close_fds=ON_POSIX)
+	p = Popen(['./SuperSimple.py'], stdout=PIPE, bufsize=1, close_fds=ON_POSIX)
 	q = Queue()
 	t = Thread(target=enqueue_output, args=(p.stdout, q))
 	t.daemon = True # thread dies with the program
@@ -86,7 +85,10 @@ log_event('clear strip @ {0}'.format(time.time()))
 Patterns.clearAll(ledStrip)
 
 if useRunwayControl == True:
-	output = RunwayControl.create(ledStrip)
+	if camTestRig == True:
+		output = RunwayControl.createCamTestRig(ledStrip)
+	else:
+		output = RunwayControl.create(ledStrip)
 	for line in output:
 		if line is not None:
 			log_event(line)
@@ -151,14 +153,30 @@ while True:
 					log_event('Fire update:' + str(int(command[1].rstrip())))				
 
 	if time.time() > nextFixedTick:
-		#log_event('Tick {0}'.format(debugTickCounter))
-		debugTickCounter += 1
 		nextFixedTick = time.time() + fixedTick
+		#log_event('Tick {0}'.format(debugTickCounter))
+		#debugTickCounter += 1 #this should be commented out!
 		
 		if useRunwayControl == True:
-			RunwayControl.flamesBlink()
-			RunwayControl.update(ledStrip)
+			if pattern == 1:
+				RunwayControl.showLights()
+			elif pattern == 2:
+				RunwayControl.showFlames()
+			elif pattern == 3:
+				RunwayControl.chaseLights1()	
+			elif pattern == 4:
+				RunwayControl.chaseLights2()
+			elif pattern == 5:
+				RunwayControl.chaseLightsAndFlames1()		
+			else:
+				#log_event('WARNING! bad pattern number {0}'.format(pattern))
+				pattern = 1 #set to something sane
+			
+			if debugTickCounter < 2:
+				#log_event('Tick {0}'.format(debugTickCounter))
+				RunwayControl.update(ledStrip)
 			pass
+		
 		else:
 			if pattern == -1:
 				pass
@@ -190,6 +208,10 @@ while True:
 				Patterns.allOn(ledStrip)
 			elif pattern == 13:
 				Patterns.lightChaseBlue(ledStrip)
+			elif pattern == 14:
+				Patterns.blinkSpecificAll(ledStrip)
+			elif pattern == 15:
+				Patterns.chaseSpecific(ledStrip)
 			else:
 				log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 1 #set to something sane

@@ -3,18 +3,29 @@ import math
 import time
 from random import randint
 
-nodemap = []
-allLights = []
-allFlames = []
+#physical
+nodeMap = []
+nodeStates = []
 
-nodestates = []
+#logical
+lightsAll = []
+flamesAll = []
+lightsLeft = []
+lightsRight = []
+lightSideLength = 0
+flamesLeft = []
+flamesRight = []
+flameSideLength = 0
 
+#logging
 events = []
 
+#globals
 rcTick = 2.0
 nextRcTick = 0
 rcBool = False
-rcIndex = 0
+rcIndex1 = 0
+rcIndex2 = 0
 
 pixelWhite = [255,255,255]
 pixelBlue = [0,255,0]
@@ -22,6 +33,7 @@ pixelYellow = [255,255,0]
 pixelRed = [255,0,0]
 pixelGreen = [0,0,255]
 pixelOff = [0,0,0]
+pixelFlame = [255,0,0]
 
 def log_event(msg):
 	events.append(msg)
@@ -31,103 +43,233 @@ def create(ledStrip):
 	log_event('creating node array [{0} nodes total]'.format(ledStrip.nLeds))
 
 	#first node
-	nodemap.append('N')
+	nodeMap.append('N')
 	
 	#intro
-	nodemap.append('1')
-	nodemap.append('2')
-	nodemap.append('3')
-	nodemap.append('1')
-	nodemap.append('2')
-	nodemap.append('3')
+	nodeMap.append('1')
+	nodeMap.append('2')
+	nodeMap.append('3')
+	nodeMap.append('1')
+	nodeMap.append('2')
+	nodeMap.append('3')
 	
 	#side 1
 	for i in range(0,20):
-		nodemap.append('F')
-		nodemap.append('1')
-		nodemap.append('2')
-		nodemap.append('3')
-		nodemap.append('1')
-		nodemap.append('2')
-		nodemap.append('3')
+		nodeMap.append('F')
+		nodeMap.append('1')
+		nodeMap.append('2')
+		nodeMap.append('3')
+		nodeMap.append('1')
+		nodeMap.append('2')
+		nodeMap.append('3')
 	
 	#side 2
 	for i in range(0,20):
-		nodemap.append('1')
-		nodemap.append('2')
-		nodemap.append('3')
-		nodemap.append('1')
-		nodemap.append('2')
-		nodemap.append('3')
-		nodemap.append('F')
+		nodeMap.append('1')
+		nodeMap.append('2')
+		nodeMap.append('3')
+		nodeMap.append('1')
+		nodeMap.append('2')
+		nodeMap.append('3')
+		nodeMap.append('F')
 
 	#outro
-	nodemap.append('1')
-	nodemap.append('2')
-	nodemap.append('3')
-	nodemap.append('1')
-	nodemap.append('2')
-	nodemap.append('3')
+	nodeMap.append('1')
+	nodeMap.append('2')
+	nodeMap.append('3')
+	nodeMap.append('1')
+	nodeMap.append('2')
+	nodeMap.append('3')
 
 	#last node
-	nodemap.append('N')
+	nodeMap.append('N')
 	
-	for i in range(0,len(nodemap)):
-		print format(i) + " " + nodemap[i]
-	
-	#light addresses
-	for	i in range(0,ledStrip.nLeds - 1):
-		if nodemap[i] == '1':
-			allLights.append(i)
-	
-	#flame addresses
-	for i in range(0,ledStrip.nLeds - 1):
-		if nodemap[i] == 'F':
-			allFlames.append(i)
-			
-	log_event("Map contains {0} lights...".format(len(allLights)))
-	print allLights
-	log_event("Map contains {0} flames...".format(len(allFlames)))
-	print allFlames
-	
-	#init nodestates
-	for i in range(0, len(nodemap)):
-		nodestates.append(False)
+	sharedCreate(ledStrip)
 
 	return events
 
-def flamesBlink():
-	global rcBool
-	for i in range(0,len(allFlames)):
-		nodestates[allFlames[i]] = rcBool
-		if rcBool == True:
-			rcBool = False
-		else:
-			rcBool = True
-			
-def flamesChase():
-	global rcTick, nextRcTick
-	if time.time() > nextRcTick:
-		nextRcTick = time.time() + rcTick
-	
-		for i in range(0,len(allFlames)):
-			if i == rcIndex:
-				nodestates[allFlames[i]] = True
-			else:
-				nodestates[allFlames[i]] = True
-				
-def randomFlames():
-	global rcTick, nextRcTick
-	if time.time() > nextRcTick:
-		nextRcTick = time.time() + rcTick
+def createCamTestRig(ledStrip):	
+	log_event('WARNING: This is Cam\'s test rig mode!')
+	log_event('creating node array [{0} nodes total]'.format(ledStrip.nLeds))
 
-		for i in range(0,len(allFlames)):
-			nodestates[allFlames[i]] = coinToss()
+	#first node
+	nodeMap.append('N')
+	
+	#intro
+	nodeMap.append('1')
+	nodeMap.append('2')
+	nodeMap.append('3')
+	nodeMap.append('1')
+	nodeMap.append('2')
+	nodeMap.append('3')
+	
+	#side 1
+	for i in range(0,8):
+		nodeMap.append('F')
+		nodeMap.append('1')
+		nodeMap.append('2')
+		nodeMap.append('3')
+		nodeMap.append('1')
+		nodeMap.append('2')
+		nodeMap.append('3')
+	
+	#side 2
+	for i in range(0,8):
+		nodeMap.append('1')
+		nodeMap.append('2')
+		nodeMap.append('3')
+		nodeMap.append('1')
+		nodeMap.append('2')
+		nodeMap.append('3')
+		nodeMap.append('F')
+
+	#outro
+	nodeMap.append('1')
+	nodeMap.append('2')
+	nodeMap.append('3')
+	nodeMap.append('1')
+	nodeMap.append('2')
+	nodeMap.append('3')
+
+	#last node
+	nodeMap.append('N')
+	
+	sharedCreate(ledStrip)
+
+	return events
+
+def sharedCreate(ledStrip):
+	for i in range(0,len(nodeMap)):
+		print format(i) + " " + nodeMap[i]
+	
+	#light addresses
+	for	i in range(0,ledStrip.nLeds - 1):
+		if nodeMap[i] == '1' or nodeMap[i] == '2' or nodeMap[i] == '3':
+			lightsAll.append(i)
+	
+	#flame addresses
+	for i in range(0,ledStrip.nLeds - 1):
+		if nodeMap[i] == 'F':
+			flamesAll.append(i)
+			
+	log_event("Map contains {0} light nodes...".format(len(lightsAll)))
+	print 'LIGHTS:'
+	print lightsAll
+	log_event("Map contains {0} flame nodes...".format(len(flamesAll)))
+	print 'FLAMES:'
+	print flamesAll
+	
+	#left and right side lights
+	global lightSideLength
+	lightSideLength = len(lightsAll)/2
+	print 'lightSideLength = {0}'.format(lightSideLength)
+	
+	for i in range(0,lightSideLength):
+		lightsLeft.append(lightsAll[i])
+	for i in range(0, lightSideLength):
+		lightsRight.append(lightsAll[i+lightSideLength])
+		
+	lightsRight.reverse()
+		
+	log_event("Left side has {0} light nodes...".format(len(lightsLeft)))
+	print 'LIGHTS (LEFT SIDE):'
+	print lightsLeft
+	log_event("Right side has {0} light nodes...".format(len(lightsRight)))
+	print 'LIGHTS (RIGHT SIDE):'
+	print lightsRight
+	
+	#left and right side flames	
+	global flameSideLength
+	flameSideLength = len(flamesAll)/2
+	print 'flameSideLength = {0}'.format(flameSideLength)
+
+	for i in range(0,flameSideLength):
+		flamesLeft.append(flamesAll[i])
+	for i in range(0, flameSideLength):
+		flamesRight.append(flamesAll[i+flameSideLength])
+		
+	flamesRight.reverse()
+		
+	log_event("Left side has {0} flame nodes...".format(len(flamesLeft)))
+	print 'FLAMES (LEFT SIDE):'
+	print flamesLeft
+	log_event("Right side has {0} flame nodes...".format(len(flamesRight)))
+	print 'FLAMES (RIGHT SIDE):'
+	print flamesRight
+	
+	#init nodeStates
+	for i in range(0, len(nodeMap)):
+		nodeStates.append(False)
+
+
+def showLights():
+	for i in range(0,len(lightsAll)):
+		nodeStates[lightsAll[i]] = True
+
+def showFlames():
+	for i in range(0,len(flamesAll)):
+		nodeStates[flamesAll[i]] = True
+
+def chaseLights1():
+	global rcIndex1
+	for i in range(0,len(lightsAll)):
+		if i == rcIndex1:
+			nodeStates[lightsAll[i]] = True
+		else:
+			nodeStates[lightsAll[i]] = False
+	rcIndex1 += 1
+	if rcIndex1 > len(lightsAll):
+		rcIndex1 = 0
+
+def chaseLights2():
+	global rcIndex1, lightsLeft, lightsRight, lightSideLength
+	for i in range(0,lightSideLength):
+		if i == rcIndex1:
+			nodeStates[lightsLeft[i]] = True
+			nodeStates[lightsRight[i]] = True
+		else:
+			nodeStates[lightsLeft[i]] = False
+			nodeStates[lightsRight[i]] = False
+	rcIndex1 += 1
+	if rcIndex1 > lightSideLength:
+		rcIndex1 = 0
+		
+def chaseLightsAndFlames1():
+	global rcIndex1, rcIndex2
+	global lightsLeft, lightsRight, lightSideLength
+	global flamesLeft, flamesRight, flameSideLength
+
+	for i in range(0,flameSideLength):
+		if i == rcIndex2:
+			nodeStates[flamesLeft[i]] = True
+			nodeStates[flamesRight[i]] = True
+			print "I set nodes {0} and {1} to True!".format(flamesLeft[i], flamesRight[i])
+		else:
+			nodeStates[flamesLeft[i]] = False
+			nodeStates[flamesRight[i]] = False
+	rcIndex2 += 1
+	if rcIndex2 > flameSideLength:
+		rcIndex2 = 0
+		
+	for j in range(0,lightSideLength):
+		if j == rcIndex1:
+			nodeStates[lightsLeft[j]] = True
+			nodeStates[lightsRight[j]] = True
+		else:
+			nodeStates[lightsLeft[j]] = False
+			nodeStates[lightsRight[j]] = False
+	rcIndex1 += 1
+	if rcIndex1 > lightSideLength:
+		rcIndex1 = 0
 
 def update(ledStrip):
 	for i in range(0, ledStrip.nLeds):
-		if nodestates[i] == True:
-			ledStrip.setPixel(i, pixelBlue)
+		if nodeStates[i] == True:
+			#debug
+			if nodeMap[i] == 'F':
+				ledStrip.setPixel(i, pixelFlame)
+			else:
+				ledStrip.setPixel(i, pixelBlue)
 		else:
 			ledStrip.setPixel(i, pixelOff)
 		

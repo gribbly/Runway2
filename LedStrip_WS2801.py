@@ -19,7 +19,7 @@
 import sys
 import terminal_color 
 
-class LedStrip_WS2801:	
+class LedStrip_WS2801:
 	def __init__(self, spiDevice, nLeds, nBuffers=1):
 		self.f = open(spiDevice, "w")
 		self.nLeds = nLeds

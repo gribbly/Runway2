@@ -6,6 +6,7 @@ from random import randint
 #physical
 nodeMap = []
 nodeStates = []
+nodeCount = 0
 
 #logical
 lightsAll = []
@@ -139,16 +140,18 @@ def createCamTestRig(ledStrip):
 	return events
 
 def sharedCreate(ledStrip):
+	print "nodeMap:"
 	for i in range(0,len(nodeMap)):
-		print format(i) + " " + nodeMap[i]
+		#print format(i) + " " + nodeMap[i]
+		print nodeMap[i]
 	
 	#light addresses
-	for	i in range(0,ledStrip.nLeds - 1):
+	for	i in range(0,len(nodeMap)):
 		if nodeMap[i] == '1' or nodeMap[i] == '2' or nodeMap[i] == '3':
 			lightsAll.append(i)
 	
 	#flame addresses
-	for i in range(0,ledStrip.nLeds - 1):
+	for i in range(0,len(nodeMap)):
 		if nodeMap[i] == 'F':
 			flamesAll.append(i)
 			
@@ -164,7 +167,7 @@ def sharedCreate(ledStrip):
 	lightSideLength = len(lightsAll)/2
 	print 'lightSideLength = {0}'.format(lightSideLength)
 	
-	for i in range(0,lightSideLength):
+	for i in range(0,lightSideLength):	
 		lightsLeft.append(lightsAll[i])
 	for i in range(0, lightSideLength):
 		lightsRight.append(lightsAll[i+lightSideLength])
@@ -201,6 +204,8 @@ def sharedCreate(ledStrip):
 	for i in range(0, len(nodeMap)):
 		nodeStates.append(False)
 
+def showNode(n):
+	nodeStates[n] = True
 
 def showLights():
 	for i in range(0,len(lightsAll)):
@@ -209,14 +214,30 @@ def showLights():
 def showFlames():
 	for i in range(0,len(flamesAll)):
 		nodeStates[flamesAll[i]] = True
+		
+def showLeftSideAll():
+	global lightsLeft, lightsRight, lightSideLength
+	global flamesLeft, flamesRight, flameSideLength
+
+	for i in range(0,lightSideLength + 1):
+		nodeStates[lightsAll[i]] = True	
+	for i in range(0,flameSideLength):
+		nodeStates[flamesAll[i]] = True
+
+def showRightSideAll():
+	global lightsLeft, lightsRight, lightSideLength
+	global flamesLeft, flamesRight, flameSideLength
+
+	for i in range(lightSideLength + 1, len(lightsAll)):
+		nodeStates[lightsAll[i]] = True	
+	for i in range(flameSideLength , len(flamesAll)):
+		nodeStates[flamesAll[i]] = True
 
 def chaseLights1():
 	global rcIndex1
 	for i in range(0,len(lightsAll)):
 		if i == rcIndex1:
 			nodeStates[lightsAll[i]] = True
-		else:
-			nodeStates[lightsAll[i]] = False
 	rcIndex1 += 1
 	if rcIndex1 > len(lightsAll):
 		rcIndex1 = 0
@@ -227,12 +248,19 @@ def chaseLights2():
 		if i == rcIndex1:
 			nodeStates[lightsLeft[i]] = True
 			nodeStates[lightsRight[i]] = True
-		else:
-			nodeStates[lightsLeft[i]] = False
-			nodeStates[lightsRight[i]] = False
 	rcIndex1 += 1
 	if rcIndex1 > lightSideLength:
 		rcIndex1 = 0
+
+def chaseLights3():
+	global rcIndex1, lightsLeft, lightsRight, lightSideLength
+	for i in range(lightSideLength-1, 0, -1):
+		if i == rcIndex1:
+			nodeStates[lightsLeft[i]] = True
+			nodeStates[lightsRight[i]] = True
+	rcIndex1 -= 1
+	if rcIndex1 < 0:
+		rcIndex1 = lightSideLength-1
 		
 def chaseLightsAndFlames1():
 	global rcIndex1, rcIndex2
@@ -243,7 +271,6 @@ def chaseLightsAndFlames1():
 		if i == rcIndex2:
 			nodeStates[flamesLeft[i]] = True
 			nodeStates[flamesRight[i]] = True
-			print "I set nodes {0} and {1} to True!".format(flamesLeft[i], flamesRight[i])
 		else:
 			nodeStates[flamesLeft[i]] = False
 			nodeStates[flamesRight[i]] = False
@@ -262,8 +289,12 @@ def chaseLightsAndFlames1():
 	if rcIndex1 > lightSideLength:
 		rcIndex1 = 0
 
+def clear():
+	for i in range(0,len(nodeMap)):
+		nodeStates[i] = False
+
 def update(ledStrip):
-	for i in range(0, ledStrip.nLeds):
+	for i in range(0,len(nodeMap)):
 		if nodeStates[i] == True:
 			#debug
 			if nodeMap[i] == 'F':

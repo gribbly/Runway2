@@ -55,6 +55,13 @@ If we need to handle multiple parameters per message, comma separate them:
 
 pattern=1,tick=0.5
 
+
+Setting SPI clock speed:
+----------------
+Mega hack! Compile and run spidev_test.c:
+
+sudo ./a.out -s 1900000 #max I can get away with!
+
 Troubleshooting:
 ----------------
 * If Flasher.py crashes you may need to kill the server manually before restarting. Get PID from **ps -A | grep Super** then do **sudo kill PID**.

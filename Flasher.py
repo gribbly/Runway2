@@ -8,8 +8,9 @@ startPattern = 5 #tbd
 fixedTick = 0.01666666666667 #60fps
 
 #realtime vars (for app to control)
-clearEveryNTicks = 1
 adjustableTick = 1.0 #starting value
+lightDuration = 0.1 #should be 0.1
+flameDuration = 0.05 #should be 0.05
 manualLight = -1
 
 #internal state vars (don't change)
@@ -97,6 +98,10 @@ if useRunwayControl == True:
 	for line in output:
 		if line is not None:
 			log_event(line)
+			
+RunwayControl.changeTick(adjustableTick)
+RunwayControl.changeLightDuration(lightDuration)
+RunwayControl.changeFlameDuration(flameDuration)
 
 while True:	
 	#print "tick..." + format(time.time())
@@ -157,11 +162,10 @@ while True:
 		
 		if debugTickCounter < 2:
 			if useRunwayControl == True:
-				clearCounter += 1
-				if clearCounter >= clearEveryNTicks:
-					RunwayControl.clear()
-					clearCounter = 0
+				RunwayControl.decrementDurations(fixedTick)
 			
+				if pattern == -1:
+					RunwayControl.clear()				
 				if pattern == 0:
 					RunwayControl.showNode(debugNode)
 				elif pattern == 1:

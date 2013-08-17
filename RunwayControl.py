@@ -22,8 +22,10 @@ flameSideLength = 0
 events = []
 
 #globals
-rcTick = 1.0
+rcTick = 0.01666666666667
 rcNextTick = 0
+rcLightDuration = 0.1
+rcFlameDuration = 0.05
 rcBool = False
 rcIndex1 = 0
 rcIndex2 = 0
@@ -34,6 +36,7 @@ pixelBlue = [0,255,0]
 pixelYellow = [255,255,0]
 pixelRed = [255,0,0]
 pixelGreen = [0,0,255]
+pixelOn = [0,255,0]
 pixelOff = [0,0,0]
 pixelFlame = [255,0,0]
 
@@ -203,41 +206,51 @@ def sharedCreate(ledStrip):
 	
 	#init nodeStates
 	for i in range(0, len(nodeMap)):
-		nodeStates.append(False)
-
-def changeTick(n):
-	global rcTick
-	rcTick = n
-	print "RunwayControl - tick is now {0}".format(rcTick)
+		nodeStates.append(0)
 
 def showNode(n):
-	nodeStates[n] = True
+	global rcTick, rcNextTick
+	if time.time() > rcNextTick:
+		rcNextTick = time.time() + rcTick
+		nodeStates[n] = rcLightDuration
 
 def showLights():
-	for i in range(0,len(lightsAll)):
-		nodeStates[lightsAll[i]] = True
+	global rcTick, rcNextTick
+	if time.time() > rcNextTick:
+		rcNextTick = time.time() + rcTick
+		for i in range(0,len(lightsAll)):
+			nodeStates[lightsAll[i]] = rcLightDuration
 
 def showFlames():
-	for i in range(0,len(flamesAll)):
-		nodeStates[flamesAll[i]] = True
+	global rcTick, rcNextTick
+	if time.time() > rcNextTick:
+		rcNextTick = time.time() + rcTick
+		for i in range(0,len(flamesAll)):
+			nodeStates[flamesAll[i]] = rcFlameDuration
 		
 def showLeftSideAll():
+	global rcTick, rcNextTick
 	global lightsLeft, lightsRight, lightSideLength
 	global flamesLeft, flamesRight, flameSideLength
 
-	for i in range(0,lightSideLength):
-		nodeStates[lightsAll[i]] = True	
-	for i in range(0,flameSideLength):
-		nodeStates[flamesAll[i]] = True
+	if time.time() > rcNextTick:
+		rcNextTick = time.time() + rcTick
+		for i in range(0,lightSideLength):
+			nodeStates[lightsAll[i]] = rcLightDuration	
+		for i in range(0,flameSideLength):
+			nodeStates[flamesAll[i]] = rcFlameDuration
 
 def showRightSideAll():
+	global rcTick, rcNextTick
 	global lightsLeft, lightsRight, lightSideLength
 	global flamesLeft, flamesRight, flameSideLength
 
-	for i in range(lightSideLength, len(lightsAll)):
-		nodeStates[lightsAll[i]] = True	
-	for i in range(flameSideLength , len(flamesAll)):
-		nodeStates[flamesAll[i]] = True
+	if time.time() > rcNextTick:
+		rcNextTick = time.time() + rcTick
+		for i in range(lightSideLength, len(lightsAll)):
+			nodeStates[lightsAll[i]] = rcLightDuration	
+		for i in range(flameSideLength , len(flamesAll)):
+			nodeStates[flamesAll[i]] = rcFlameDuration
 
 def chaseLights1():
 	global rcTick, rcNextTick
@@ -246,7 +259,7 @@ def chaseLights1():
 		rcNextTick = time.time() + rcTick
 		for i in range(0,len(lightsAll)):
 			if i == rcIndex1:
-				nodeStates[lightsAll[i]] = True
+				nodeStates[lightsAll[i]] = rcLightDuration
 		rcIndex1 += 1
 		if rcIndex1 > len(lightsAll):
 			rcIndex1 = 0
@@ -255,8 +268,8 @@ def chaseLights2():
 	global rcIndex1, lightsLeft, lightsRight, lightSideLength
 	for i in range(0,lightSideLength):
 		if i == rcIndex1:
-			nodeStates[lightsLeft[i]] = True
-			nodeStates[lightsRight[i]] = True
+			nodeStates[lightsLeft[i]] = rcLightDuration
+			nodeStates[lightsRight[i]] = rcLightDuration
 	rcIndex1 += 1
 	if rcIndex1 > lightSideLength:
 		rcIndex1 = 0
@@ -265,38 +278,11 @@ def chaseLights3():
 	global rcIndex1, lightsLeft, lightsRight, lightSideLength
 	for i in range(lightSideLength-1, 0, -1):
 		if i == rcIndex1:
-			nodeStates[lightsLeft[i]] = True
-			nodeStates[lightsRight[i]] = True
+			nodeStates[lightsLeft[i]] = rcLightDuration
+			nodeStates[lightsRight[i]] = rcLightDuration
 	rcIndex1 -= 1
 	if rcIndex1 < 0:
 		rcIndex1 = lightSideLength-1
-		
-def chaseLightsAndFlames1():
-	global rcIndex1, rcIndex2
-	global lightsLeft, lightsRight, lightSideLength
-	global flamesLeft, flamesRight, flameSideLength
-
-	for i in range(0,flameSideLength):
-		if i == rcIndex2:
-			nodeStates[flamesLeft[i]] = True
-			nodeStates[flamesRight[i]] = True
-		else:
-			nodeStates[flamesLeft[i]] = False
-			nodeStates[flamesRight[i]] = False
-	rcIndex2 += 1
-	if rcIndex2 > flameSideLength:
-		rcIndex2 = 0
-		
-	for j in range(0,lightSideLength):
-		if j == rcIndex1:
-			nodeStates[lightsLeft[j]] = True
-			nodeStates[lightsRight[j]] = True
-		else:
-			nodeStates[lightsLeft[j]] = False
-			nodeStates[lightsRight[j]] = False
-	rcIndex1 += 1
-	if rcIndex1 > lightSideLength:
-		rcIndex1 = 0
 		
 def chaseLights4(n):
 	global rcIndex1, lightsLeft, lightsRight, lightSideLength
@@ -304,8 +290,8 @@ def chaseLights4(n):
 		rcIndex1 = 0
 	for i in range(0, lightSideLength - rcIndex1):
 		if i % n == 0:
-			nodeStates[lightsLeft[i + rcIndex1]] = True
-			nodeStates[lightsRight[i + rcIndex1]] = True
+			nodeStates[lightsLeft[i + rcIndex1]] = rcLightDuration
+			nodeStates[lightsRight[i + rcIndex1]] = rcLightDuration
 			
 	rcIndex1 += 1
 
@@ -316,29 +302,48 @@ def chaseLights5(n, w):
 		rcIndex1 = 0
 	for i in range(0, lightSideLength - rcIndex1):
 		if i % n == 0:
-			nodeStates[lightsLeft[i + rcIndex1]] = True
-			nodeStates[lightsRight[i + rcIndex1]] = True
+			nodeStates[lightsLeft[i + rcIndex1]] = rcLightDuration
+			nodeStates[lightsRight[i + rcIndex1]] = rcLightDuration
 			
 	rcIndex1 += 1
 
 
 def clear():
 	for i in range(0,len(nodeMap)):
-		nodeStates[i] = False
+		nodeStates[i] = 0
+		
+def decrementDurations(t):
+	for i in range(0,len(nodeMap)):
+		nodeStates[i] -= t
 
 def update(ledStrip):
 	for i in range(0,len(nodeMap)):
-		if nodeStates[i] == True:
+		if nodeStates[i] > 0:
 			#debug
 			if nodeMap[i] == 'F':
 				ledStrip.setPixel(i, pixelFlame)
 			else:
-				ledStrip.setPixel(i, pixelBlue)
+				ledStrip.setPixel(i, pixelOn)
 		else:
 			ledStrip.setPixel(i, pixelOff)
 		
 	ledStrip.update()
 	time.sleep(0)
+
+def changeTick(n):
+	global rcTick
+	rcTick = max(min(n, 20.0), 0.01666666666667)
+	print "RunwayControl - tick is now {0}".format(rcTick)
+
+def changeLightDuration(n):
+	global rcLightDuration
+	rcLightDuration = max(min(n, 10.0), 0.0005)
+	print "RunwayControl - light duration is now {0}".format(rcLightDuration)
+	
+def changeFlameDuration(n):
+	global rcFlameDuration
+	rcFlameDuration = max(min(n, 3.0), 0.005)
+	print "RunwayControl - flame duration is now {0}".format(rcFlameDuration)
 
 def coinToss():
 	if randint(0,1) == 0:

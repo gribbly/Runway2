@@ -318,12 +318,18 @@ def decrementDurations(t):
 	for i in range(0,len(nodeMap)):
 		nodeStates[i] -= t
 
-def fingerLights(l):
+def updateFingerLights(l):
 	for i in range(0, len(l)):
 		requestedLightNumber = l[i]
 		requestedLightNodes = getNodesFromLightNumber(requestedLightNumber)
 		for i in range(0, len(requestedLightNodes)):
-			nodeStates[lightsAll[requestedLightNodes[i]]] = rcLightDuration
+			nodeStates[lightsAll[requestedLightNodes[i]]] = rcLightDuration * 3
+
+def updateFingerFlames(f):
+	for i in range(0, len(f)):
+		requestedFlameNumber = f[i]
+		requestedFlameNode = getNodeFromFlameNumber(requestedFlameNumber)
+		nodeStates[flamesAll[requestedFlameNode]] = rcFlameDuration
 
 def update(ledStrip):
 	for i in range(0,len(nodeMap)):
@@ -359,6 +365,10 @@ def getNodesFromLightNumber(n):
 	node2 = node1 - 1
 	node3 = node1 - 2
 	return [node1, node2, node3]
+	
+def getNodeFromFlameNumber(n):
+	node1 = n - 1
+	return node1
 
 def coinToss():
 	if randint(0,1) == 0:

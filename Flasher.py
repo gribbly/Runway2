@@ -1,7 +1,7 @@
 #tweaks
-nodes = 292 #should be 292
+nodes = 124 #should be 292
 useRunwayControl = True #should be True
-camTestRig = False #should be False
+camTestRig = True #should be False
 fakeMode = False #should be False
 noServer = False #should be False
 startPattern = 9 #tbd
@@ -12,6 +12,7 @@ adjustableTick = 0.01666666666667 #starting value
 lightDuration = 0.05 #should be 0.1
 flameDuration = 0.05 #should be 0.05
 fingerLights = []
+fingerFlames = []
 
 #internal state vars (don't change)
 debugTickCounter = 0
@@ -104,7 +105,6 @@ RunwayControl.changeLightDuration(lightDuration)
 RunwayControl.changeFlameDuration(flameDuration)
 
 while True:	
-	#print "tick..." + format(time.time())
 	if noServer == False:
 		try:  
 			line = q.get_nowait() 
@@ -144,7 +144,6 @@ while True:
 				elif command[0] == 'light':
 					try: 
 						fingerLights.append(int(command[1].rstrip()))
-						#log_event('Got light command')
 					except:
 						log_event('Bad light input: ' + str(line))
 					else:
@@ -153,93 +152,93 @@ while True:
 						
 				elif command[0] == 'fire':
 					try: 
-						pass
-						log_event('Got fire command')
+						fingerFlames.append(int(command[1].rstrip()))
 					except:
 						log_event('Bad fire input: ' + str(line))
 					else:
 						pass
-						log_event('Fire update:' + str(int(command[1].rstrip())))				
+						#log_event('Fire update:' + str(int(command[1].rstrip())))				
 
 	if time.time() > nextFixedTick:
 		nextFixedTick = time.time() + fixedTick
-		#log_event('Tick {0}'.format(debugTickCounter))
-		#debugTickCounter += 1 #this should be commented out!
+
+		if useRunwayControl == True:
+			RunwayControl.decrementDurations(fixedTick)
 		
-		if debugTickCounter < 2:
-			if useRunwayControl == True:
-				RunwayControl.decrementDurations(fixedTick)
-			
-				if pattern == -1:
-					RunwayControl.clear()				
-				if pattern == 0:
-					RunwayControl.showNode(debugNode)
-				elif pattern == 1:
-					RunwayControl.showLights()
-				elif pattern == 2:
-					RunwayControl.showFlames()
-				elif pattern == 3:
-					RunwayControl.showLeftSideAll()		
-				elif pattern == 4:
-					RunwayControl.showRightSideAll()
-				elif pattern == 5:
-					RunwayControl.chaseLights1()	
-				elif pattern == 6:
-					RunwayControl.chaseLights2()
-				elif pattern == 7:
-					RunwayControl.chaseLights3()
-				elif pattern == 8:
-					RunwayControl.chaseLights4(5) #chase every n
-				elif pattern == 9:
-					RunwayControl.chaseLights5() #chase by lights
-				else:
-					#log_event('WARNING! bad pattern number {0}'.format(pattern))
-					pattern = 1 #set to something sane
-	
-				if len(fingerLights) > 0:
-					RunwayControl.fingerLights(fingerLights)
-				RunwayControl.update(ledStrip)
-				
-				fingerLights = []
-		
+			if pattern == -1:
+				RunwayControl.clear()				
+			if pattern == 0:
+				RunwayControl.showNode(debugNode)
+			elif pattern == 1:
+				RunwayControl.showLights()
+			elif pattern == 2:
+				RunwayControl.showFlames()
+			elif pattern == 3:
+				RunwayControl.showLeftSideAll()		
+			elif pattern == 4:
+				RunwayControl.showRightSideAll()
+			elif pattern == 5:
+				RunwayControl.chaseLights1()	
+			elif pattern == 6:
+				RunwayControl.chaseLights2()
+			elif pattern == 7:
+				RunwayControl.chaseLights3()
+			elif pattern == 8:
+				RunwayControl.chaseLights4(5) #chase every nth node
+			elif pattern == 9:
+				RunwayControl.chaseLights5() #chase by lights
 			else:
-				if pattern == -1:
-					pass
-				elif pattern == 0:
-					Patterns.clearAll(ledStrip)
-				elif pattern == 1:
-					Patterns.randomString(ledStrip)
-				elif pattern == 2:
-					Patterns.randomPoint(ledStrip)
-				elif pattern == 3:
-					Patterns.simpleChaser(ledStrip)
-				elif pattern == 4:
-					Patterns.cylonChaser(ledStrip)
-				elif pattern == 5:
-					Patterns.stringBlink(ledStrip)	
-				elif pattern == 6:			
-					Patterns.lightningStringBlink(ledStrip, 33) #probability
-				elif pattern == 7:
-					Patterns.stringPulsate(ledStrip)
-				elif pattern == 8:
-					Patterns.watery(ledStrip, 128) #intensity
-				elif pattern == 9:
-					Patterns.blueWatery(ledStrip, 128) #intensity
-				elif pattern == 10:
-					Patterns.lightChase(ledStrip)
-				elif pattern == 11:
-					Patterns.blinkSpecific(ledStrip, 1)
-				elif pattern == 12:
-					Patterns.allOn(ledStrip)
-				elif pattern == 13:
-					Patterns.lightChaseBlue(ledStrip)
-				elif pattern == 14:
-					Patterns.blinkSpecificAll(ledStrip)
-				elif pattern == 15:
-					Patterns.chaseSpecific(ledStrip)
-				else:
-					log_event('WARNING! bad pattern number {0}'.format(pattern))
-					pattern = 1 #set to something sane
-		
-				Patterns.manualControl(ledStrip, manualLight)			
-				Patterns.sharedUpdate(ledStrip)
+				#log_event('WARNING! bad pattern number {0}'.format(pattern))
+				pattern = 1 #set to something sane
+
+			if len(fingerLights) > 0:
+				RunwayControl.updateFingerLights(fingerLights)
+			if len(fingerFlames) > 0:
+				RunwayControl.updateFingerFlames(fingerFlames)
+				
+			RunwayControl.update(ledStrip)
+			
+			fingerLights = []
+			fingerFlames = []
+	
+		else:
+			if pattern == -1:
+				pass
+			elif pattern == 0:
+				Patterns.clearAll(ledStrip)
+			elif pattern == 1:
+				Patterns.randomString(ledStrip)
+			elif pattern == 2:
+				Patterns.randomPoint(ledStrip)
+			elif pattern == 3:
+				Patterns.simpleChaser(ledStrip)
+			elif pattern == 4:
+				Patterns.cylonChaser(ledStrip)
+			elif pattern == 5:
+				Patterns.stringBlink(ledStrip)	
+			elif pattern == 6:			
+				Patterns.lightningStringBlink(ledStrip, 33) #probability
+			elif pattern == 7:
+				Patterns.stringPulsate(ledStrip)
+			elif pattern == 8:
+				Patterns.watery(ledStrip, 128) #intensity
+			elif pattern == 9:
+				Patterns.blueWatery(ledStrip, 128) #intensity
+			elif pattern == 10:
+				Patterns.lightChase(ledStrip)
+			elif pattern == 11:
+				Patterns.blinkSpecific(ledStrip, 1)
+			elif pattern == 12:
+				Patterns.allOn(ledStrip)
+			elif pattern == 13:
+				Patterns.lightChaseBlue(ledStrip)
+			elif pattern == 14:
+				Patterns.blinkSpecificAll(ledStrip)
+			elif pattern == 15:
+				Patterns.chaseSpecific(ledStrip)
+			else:
+				log_event('WARNING! bad pattern number {0}'.format(pattern))
+				pattern = 1 #set to something sane
+	
+			Patterns.manualControl(ledStrip, manualLight)			
+			Patterns.sharedUpdate(ledStrip)

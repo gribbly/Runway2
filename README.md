@@ -10,16 +10,23 @@ Instructions
 Ensure LEDs are powered, then run **sudo python Flasher.py**
 
 Flasher.py does the following:
-* Starts SuperSimple.py (minimalist socket server) in a child thread (use noSocket = True to disable)
+* Starts SuperSimple.py (minimalist socket server) in a child thread (use noServer = True to disable)
 * Connects to LED string via GPIO (use fakeMode = True to bypass)
 * Writes to a log file (called 'log')
 * Then loops indefinitely:
   * Checks to see if SuperSimple has written anything to stdout. If so, process this input (e.g., change tick time or pattern or whatever)
-  * Update LED pattern(s)
+  * Update LED pattern(s) via either RunwayControl.py (default) or Patterns.py (testing only)
 
-Note: You can pass a pattern int on the command line:
+Note: You can pass pattern commands on the command line. Use pattern 0 to test specific nodes:
 
-**sudo python Flasher.py 3**
+**sudo python Flasher.py 0 1** #turn on node 1
+**sudo python Flasher.py 0 123** #turn on node 123
+
+Other useful test patterns:
+**sudo python Flasher.py 1** #turn on all light nodes
+**sudo python Flasher.py 2** #turn on all flame nodes
+**sudo python Flasher.py 3** #turn on all left side nodes (lights and flames)
+**sudo python Flasher.py 4** #turn on all right side nodes (lights and flames)
 
 To connect to the socket server
 -------------------------------
@@ -33,23 +40,7 @@ To connect to the socket server
 
 Protocol
 --------
-pattern=int
-
-tick=float
-
-bpm=float **NOTE** todo. Haven't implemented this yet.
-
-light=int
-
-fire=int
-
-...which I'll interpret like this:
-
-* pattern - I'll immediately switch to the specified pattern number (suggest we use ints not pattern names). Let's reserve pattern=0 for "everything off"
-* tick - directly set the delay between ticks in seconds (e.g, 0.1 is a tenth of a second-per-tick)
-* bpm - pattern tempo in beats-per-minute. I will calculate tick from this.
-* light - turn on a specific light (in addition to current pattern)
-* fire - turn on a specific fire (in addition to current pattern)
+**NEED TO UPDATE**
 
 If we need to handle multiple parameters per message, comma separate them:
 

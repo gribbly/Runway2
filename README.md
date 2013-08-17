@@ -20,12 +20,16 @@ Flasher.py does the following:
 Note: You can pass pattern commands on the command line. Use pattern 0 to test specific nodes:
 
 **sudo python Flasher.py 0 1** #turn on node 1
+
 **sudo python Flasher.py 0 123** #turn on node 123
 
 Other useful test patterns:
 **sudo python Flasher.py 1** #turn on all light nodes
+
 **sudo python Flasher.py 2** #turn on all flame nodes
+
 **sudo python Flasher.py 3** #turn on all left side nodes (lights and flames)
+
 **sudo python Flasher.py 4** #turn on all right side nodes (lights and flames)
 
 To connect to the socket server

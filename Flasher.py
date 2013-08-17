@@ -1,7 +1,7 @@
 #tweaks
-nodes = 124 #should be 292
+nodes = 292 #should be 292
 useRunwayControl = True #should be True
-camTestRig = True #should be False
+camTestRig = False #should be False
 fakeMode = False #should be False
 noServer = False #should be False
 startPattern = 9 #tbd

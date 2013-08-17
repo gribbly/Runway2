@@ -219,7 +219,7 @@ def showLeftSideAll():
 	global lightsLeft, lightsRight, lightSideLength
 	global flamesLeft, flamesRight, flameSideLength
 
-	for i in range(0,lightSideLength + 1):
+	for i in range(0,lightSideLength):
 		nodeStates[lightsAll[i]] = True	
 	for i in range(0,flameSideLength):
 		nodeStates[flamesAll[i]] = True
@@ -228,7 +228,7 @@ def showRightSideAll():
 	global lightsLeft, lightsRight, lightSideLength
 	global flamesLeft, flamesRight, flameSideLength
 
-	for i in range(lightSideLength + 1, len(lightsAll)):
+	for i in range(lightSideLength, len(lightsAll)):
 		nodeStates[lightsAll[i]] = True	
 	for i in range(flameSideLength , len(flamesAll)):
 		nodeStates[flamesAll[i]] = True

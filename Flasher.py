@@ -160,9 +160,8 @@ while True:
 					pass
 					log_event('Fire update:' + str(int(command[1].rstrip())))				
 
-	if True:
-#	if time.time() > nextFixedTick:
-#		nextFixedTick = time.time() + fixedTick
+	if time.time() > nextFixedTick:
+		nextFixedTick = time.time() + fixedTick
 		#log_event('Tick {0}'.format(debugTickCounter))
 		#debugTickCounter += 1 #this should be commented out!
 		

@@ -165,7 +165,7 @@ def sharedCreate(ledStrip):
 	#left and right side lights
 	global lightSideLength
 	lightSideLength = len(lightsAll)/2
-	print 'lightSideLength = {0}'.format(lightSideLength)
+	print '\nlightSideLength = {0} nodes'.format(lightSideLength)
 	
 	for i in range(0,lightSideLength):	
 		lightsLeft.append(lightsAll[i])
@@ -184,7 +184,7 @@ def sharedCreate(ledStrip):
 	#left and right side flames	
 	global flameSideLength
 	flameSideLength = len(flamesAll)/2
-	print 'flameSideLength = {0}'.format(flameSideLength)
+	print '\nflameSideLength = {0} nodes'.format(flameSideLength)
 
 	for i in range(0,flameSideLength):
 		flamesLeft.append(flamesAll[i])
@@ -288,6 +288,30 @@ def chaseLightsAndFlames1():
 	rcIndex1 += 1
 	if rcIndex1 > lightSideLength:
 		rcIndex1 = 0
+		
+def chaseLights4(n):
+	global rcIndex1, lightsLeft, lightsRight, lightSideLength
+	if rcIndex1 > n - 1:
+		rcIndex1 = 0
+	for i in range(0, lightSideLength - rcIndex1):
+		if i % n == 0:
+			nodeStates[lightsLeft[i + rcIndex1]] = True
+			nodeStates[lightsRight[i + rcIndex1]] = True
+			
+	rcIndex1 += 1
+
+def chaseLights5(n, w):
+	#todo: support w
+	global rcIndex1, lightsLeft, lightsRight, lightSideLength
+	if rcIndex1 > n - 1:
+		rcIndex1 = 0
+	for i in range(0, lightSideLength - rcIndex1):
+		if i % n == 0:
+			nodeStates[lightsLeft[i + rcIndex1]] = True
+			nodeStates[lightsRight[i + rcIndex1]] = True
+			
+	rcIndex1 += 1
+
 
 def clear():
 	for i in range(0,len(nodeMap)):

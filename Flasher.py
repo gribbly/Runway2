@@ -4,20 +4,17 @@ useRunwayControl = True #should be True
 camTestRig = False #should be False
 fakeMode = False #should be False
 noServer = False #should be False
+startPattern = 8 #tbd
+fixedTick = 0.01666666666667 #120fps
 
-#will be deprecated (not used by RunwayControl)
-startPattern = 1 #starting pattern... should be 3
-blinkNode = 62 #for debugging with pattern 11
-bpm = 120 #default bpm (not used)
+#realtime vars (for app to control)
+clearEveryNTicks = 1
 adjustableTick = 1.0 #starting value
-
-#leave this shit alone
 manualLight = -1
-fixedTick = 0.00833333333333 #120fps
-#fixedTick = 0.01666666666667 #60fps
-#fixedTick = 0.03333333333333 #30fps
-#fixedTick = 0.5
+
+#internal state vars (don't change)
 debugTickCounter = 0
+clearCounter = 0
 
 import sys
 import time
@@ -71,7 +68,7 @@ if len(sys.argv) > 2:
 	try:
 		debugNode = int(sys.argv[2])
 	except:
-		log_event('WARNING! Bad pattern arg {0}'.format(sys.argv[2]))
+		log_event('WARNING! Bad arg {0} {1}'.format(sys.argv[1], sys.argv[2]))
 
 if noServer == False:
 	log_event('starting SuperSimple.py @ {0}'.format(time.time()))
@@ -121,14 +118,6 @@ while True:
 					log_event('Bad tick input: ' + str(line))
 				else:
 					log_event('Tick update:' + str(adjustableTick))
-			elif command[0] == 'bpm':
-				try: 
-					log_event('Got bpm command')
-					bpm = float(command[1].rstrip())
-				except:
-					log_event('Bad bpm input: ' + str(line))
-				else:
-					log_event('Bpm update:' + str(float(command[1].rstrip())))
 			elif command[0] == 'pattern':
 				try: 
 					log_event('Got pattern command')
@@ -167,7 +156,10 @@ while True:
 		
 		if debugTickCounter < 2:
 			if useRunwayControl == True:
-				RunwayControl.clear()
+				clearCounter += 1
+				if clearCounter >= clearEveryNTicks:
+					RunwayControl.clear()
+					clearCounter = 0
 			
 				if pattern == 0:
 					RunwayControl.showNode(debugNode)
@@ -184,7 +176,11 @@ while True:
 				elif pattern == 6:
 					RunwayControl.chaseLights2()
 				elif pattern == 7:
-					RunwayControl.chaseLights3()		
+					RunwayControl.chaseLights3()
+				elif pattern == 8:
+					RunwayControl.chaseLights4(5) #chase every n
+				elif pattern == 9:
+					RunwayControl.chaseLights5(5, 3) #chase every n, with width
 				else:
 					#log_event('WARNING! bad pattern number {0}'.format(pattern))
 					pattern = 1 #set to something sane
@@ -217,7 +213,7 @@ while True:
 				elif pattern == 10:
 					Patterns.lightChase(ledStrip)
 				elif pattern == 11:
-					Patterns.blinkSpecific(ledStrip, blinkNode)
+					Patterns.blinkSpecific(ledStrip, 1)
 				elif pattern == 12:
 					Patterns.allOn(ledStrip)
 				elif pattern == 13:

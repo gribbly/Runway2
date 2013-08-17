@@ -46,23 +46,23 @@ To connect to the socket server
 
 Protocol
 --------
-alive = 1 //dead man's switch. If I don't get this within 15 seconds, I'll switch to "screensaver mode" (no fire)
+**alive = 1** //dead man's switch. If I don't get this within 15 seconds, I'll switch to "screensaver mode" (no fire)
 
-pattern = n
+**pattern = n**
 
-tick = n //pattern tempo. Clamped to 0.01666666666667 - 20.0
+**tick = n** //pattern tempo. Clamped to 0.01666666666667 - 20.0
 
-light = n //specific light
+**light = n** //specific light
 
-fire = n //specific flame
+**fire = n** //specific flame
 
-ld = n //light duration. Clamped to 0.0005 - 10.0
+**ld = n** //light duration. Clamped to 0.0005 - 10.0
 
-fd = n //fire duration. Clamped to 0.005 - 3.0
+**fd = n** //fire duration. Clamped to 0.005 - 3.0
 
 If we need to handle multiple parameters per message, comma separate them:
 
-light=1,light=2,light=3
+**light=1,light=2,light=3**
 
 
 Setting SPI clock speed:

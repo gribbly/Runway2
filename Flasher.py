@@ -4,14 +4,14 @@ useRunwayControl = True #should be True
 camTestRig = False #should be False
 fakeMode = False #should be False
 noServer = False #should be False
-startPattern = 5 #tbd
+startPattern = 9 #tbd
 fixedTick = 0.01666666666667 #60fps
 
 #realtime vars (for app to control)
-adjustableTick = 1.0 #starting value
-lightDuration = 0.1 #should be 0.1
+adjustableTick = 0.01666666666667 #starting value
+lightDuration = 0.05 #should be 0.1
 flameDuration = 0.05 #should be 0.05
-manualLight = -1
+fingerLights = []
 
 #internal state vars (don't change)
 debugTickCounter = 0
@@ -112,48 +112,54 @@ while True:
 		except Empty:
 			pass
 		else: # got line
-			print line
-			input = str(line).split(',')
-			command = input[0].split('=')
-			if command[0] == 'tick':
-				try: 
-					log_event('Got tick command')
-					adjustableTick = float(command[1].rstrip())
-					RunwayControl.changeTick(adjustableTick)
-				except:
-					log_event('Bad tick input: ' + str(line))
-				else:
-					log_event('Tick update:' + str(adjustableTick))
-			elif command[0] == 'pattern':
-				try: 
-					log_event('Got pattern command')
-					pattern = int(command[1].rstrip())
-				except:
-					log_event('Bad pattern input: ' + str(line))
-				else:
-					log_event('Pattern update:' + str(pattern))
-					if useRunwayControl == False:
-						Patterns.resetSharedVars()
-			elif command[0] == 'light':
-				try: 
-					pass
-					log_event('Got light command')
-				except:
-					log_event('Bad light input: ' + str(line))
-				else:
-					log_event('Light update:' + str(int(command[1].rstrip())))
-					manualLight = int(command[1].rstrip())
-					if useRunwayControl == False:
-						Patterns.resetSharedVars()	
-			elif command[0] == 'fire':
-				try: 
-					pass
-					log_event('Got fire command')
-				except:
-					log_event('Bad fire input: ' + str(line))
-				else:
-					pass
-					log_event('Fire update:' + str(int(command[1].rstrip())))				
+			line = line.strip()
+			appInput = line.split(',')
+			print appInput
+
+			for input in appInput:
+				command = input.split('=')
+				if len(command) < 2:
+					break #filter out commands that aren't in the form x=y
+				
+				if command[0] == 'tick':
+					try: 
+						#log_event('Got tick command')
+						adjustableTick = float(command[1].rstrip())
+						RunwayControl.changeTick(adjustableTick)
+					except:
+						log_event('Bad tick input: ' + str(line))
+					else:
+						pass
+						#log_event('Tick update:' + str(adjustableTick))
+				elif command[0] == 'pattern':
+					try:
+						#log_event('Got pattern command')
+						pattern = int(command[1].rstrip())
+					except:
+						log_event('Bad pattern input: ' + str(line))
+					else:
+						#log_event('Pattern update:' + str(pattern))
+						if useRunwayControl == False:
+							Patterns.resetSharedVars()
+				elif command[0] == 'light':
+					try: 
+						fingerLights.append(int(command[1].rstrip()))
+						#log_event('Got light command')
+					except:
+						log_event('Bad light input: ' + str(line))
+					else:
+						pass
+						#log_event('Light update:' + str(int(command[1].rstrip())))
+						
+				elif command[0] == 'fire':
+					try: 
+						pass
+						log_event('Got fire command')
+					except:
+						log_event('Bad fire input: ' + str(line))
+					else:
+						pass
+						log_event('Fire update:' + str(int(command[1].rstrip())))				
 
 	if time.time() > nextFixedTick:
 		nextFixedTick = time.time() + fixedTick
@@ -185,12 +191,16 @@ while True:
 				elif pattern == 8:
 					RunwayControl.chaseLights4(5) #chase every n
 				elif pattern == 9:
-					RunwayControl.chaseLights5(5, 3) #chase every n, with width
+					RunwayControl.chaseLights5() #chase by lights
 				else:
 					#log_event('WARNING! bad pattern number {0}'.format(pattern))
 					pattern = 1 #set to something sane
 	
+				if len(fingerLights) > 0:
+					RunwayControl.fingerLights(fingerLights)
 				RunwayControl.update(ledStrip)
+				
+				fingerLights = []
 		
 			else:
 				if pattern == -1:

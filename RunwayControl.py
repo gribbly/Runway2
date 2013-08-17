@@ -295,18 +295,20 @@ def chaseLights4(n):
 			
 	rcIndex1 += 1
 
-def chaseLights5(n, w):
-	#todo: support w
-	global rcIndex1, lightsLeft, lightsRight, lightSideLength
-	if rcIndex1 > n - 1:
-		rcIndex1 = 0
-	for i in range(0, lightSideLength - rcIndex1):
-		if i % n == 0:
-			nodeStates[lightsLeft[i + rcIndex1]] = rcLightDuration
-			nodeStates[lightsRight[i + rcIndex1]] = rcLightDuration
-			
-	rcIndex1 += 1
-
+def chaseLights5():
+	#chase by lights, not nodes
+	global rcTick, rcNextTick
+	global rcIndex1
+	if time.time() > rcNextTick:
+		rcNextTick = time.time() + rcTick
+		for i in range(0,len(lightsAll)/3):
+			if i == rcIndex1:
+				requestedLightNodes = getNodesFromLightNumber(i)
+				for i in range(0, len(requestedLightNodes)):
+					nodeStates[lightsAll[requestedLightNodes[i]]] = rcLightDuration
+		rcIndex1 += 1
+		if rcIndex1 > len(lightsAll)/3:
+			rcIndex1 = 0
 
 def clear():
 	for i in range(0,len(nodeMap)):
@@ -315,6 +317,13 @@ def clear():
 def decrementDurations(t):
 	for i in range(0,len(nodeMap)):
 		nodeStates[i] -= t
+
+def fingerLights(l):
+	for i in range(0, len(l)):
+		requestedLightNumber = l[i]
+		requestedLightNodes = getNodesFromLightNumber(requestedLightNumber)
+		for i in range(0, len(requestedLightNodes)):
+			nodeStates[lightsAll[requestedLightNodes[i]]] = rcLightDuration
 
 def update(ledStrip):
 	for i in range(0,len(nodeMap)):
@@ -344,6 +353,12 @@ def changeFlameDuration(n):
 	global rcFlameDuration
 	rcFlameDuration = max(min(n, 3.0), 0.005)
 	print "RunwayControl - flame duration is now {0}".format(rcFlameDuration)
+
+def getNodesFromLightNumber(n):
+	node1 = (3 * n) - 1
+	node2 = node1 - 1
+	node3 = node1 - 2
+	return [node1, node2, node3]
 
 def coinToss():
 	if randint(0,1) == 0:

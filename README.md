@@ -23,7 +23,9 @@ Note: You can pass pattern commands on the command line. Use pattern 0 to test s
 
 **sudo python Flasher.py 0 123** #turn on node 123
 
+
 Other useful test patterns:
+
 **sudo python Flasher.py 1** #turn on all light nodes
 
 **sudo python Flasher.py 2** #turn on all flame nodes

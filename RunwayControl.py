@@ -22,12 +22,13 @@ flameSideLength = 0
 events = []
 
 #globals
-rcTick = 2.0
-nextRcTick = 0
+rcTick = 1.0
+rcNextTick = 0
 rcBool = False
 rcIndex1 = 0
 rcIndex2 = 0
 
+#colors
 pixelWhite = [255,255,255]
 pixelBlue = [0,255,0]
 pixelYellow = [255,255,0]
@@ -38,7 +39,7 @@ pixelFlame = [255,0,0]
 
 def log_event(msg):
 	events.append(msg)
-	
+
 
 def create(ledStrip):
 	log_event('creating node array [{0} nodes total]'.format(ledStrip.nLeds))
@@ -204,6 +205,11 @@ def sharedCreate(ledStrip):
 	for i in range(0, len(nodeMap)):
 		nodeStates.append(False)
 
+def changeTick(n):
+	global rcTick
+	rcTick = n
+	print "RunwayControl - tick is now {0}".format(rcTick)
+
 def showNode(n):
 	nodeStates[n] = True
 
@@ -234,13 +240,16 @@ def showRightSideAll():
 		nodeStates[flamesAll[i]] = True
 
 def chaseLights1():
+	global rcTick, rcNextTick
 	global rcIndex1
-	for i in range(0,len(lightsAll)):
-		if i == rcIndex1:
-			nodeStates[lightsAll[i]] = True
-	rcIndex1 += 1
-	if rcIndex1 > len(lightsAll):
-		rcIndex1 = 0
+	if time.time() > rcNextTick:
+		rcNextTick = time.time() + rcTick
+		for i in range(0,len(lightsAll)):
+			if i == rcIndex1:
+				nodeStates[lightsAll[i]] = True
+		rcIndex1 += 1
+		if rcIndex1 > len(lightsAll):
+			rcIndex1 = 0
 
 def chaseLights2():
 	global rcIndex1, lightsLeft, lightsRight, lightSideLength

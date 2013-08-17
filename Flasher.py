@@ -4,8 +4,8 @@ useRunwayControl = True #should be True
 camTestRig = False #should be False
 fakeMode = False #should be False
 noServer = False #should be False
-startPattern = 8 #tbd
-fixedTick = 0.01666666666667 #120fps
+startPattern = 5 #tbd
+fixedTick = 0.01666666666667 #60fps
 
 #realtime vars (for app to control)
 clearEveryNTicks = 1
@@ -114,6 +114,7 @@ while True:
 				try: 
 					log_event('Got tick command')
 					adjustableTick = float(command[1].rstrip())
+					RunwayControl.changeTick(adjustableTick)
 				except:
 					log_event('Bad tick input: ' + str(line))
 				else:

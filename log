@@ -1,16 +1,33 @@
-1376760347.32: HELLO WORLD @ 1376760347.32
-1376760347.32: starting in REAL mode
-1376760347.33: starting SuperSimple.py @ 1376760347.33
-1376760347.35: started SuperSimple.py @ 1376760347.35
-1376760347.35: fixedTick is 0.0166666666667
-1376760347.36: adjustableTick is 1.0
-1376760347.36: pattern is 0
-1376760347.36: we have 292 ws2801 nodes
-1376760347.37: clear strip @ 1376760347.37
-1376760347.67: creating node array [292 nodes total]
-1376760347.67: Map contains 252 light nodes...
-1376760347.67: Map contains 40 flame nodes...
-1376760347.67: Left side has 126 light nodes...
-1376760347.68: Right side has 126 light nodes...
-1376760347.68: Left side has 20 flame nodes...
-1376760347.68: Right side has 20 flame nodes...
+1376763452.4: HELLO WORLD @ 1376763452.4
+1376763452.4: starting in REAL mode
+1376763452.41: starting SuperSimple.py @ 1376763452.41
+1376763452.43: started SuperSimple.py @ 1376763452.43
+1376763452.43: fixedTick is 0.0166666666667
+1376763452.44: adjustableTick is 1.0
+1376763452.44: pattern is 5
+1376763452.44: we have 124 ws2801 nodes
+1376763452.44: clear strip @ 1376763452.44
+1376763452.57: WARNING: This is Cam's test rig mode!
+1376763452.58: creating node array [124 nodes total]
+1376763452.58: Map contains 108 light nodes...
+1376763452.58: Map contains 16 flame nodes...
+1376763452.58: Left side has 54 light nodes...
+1376763452.58: Right side has 54 light nodes...
+1376763452.58: Left side has 8 flame nodes...
+1376763452.58: Right side has 8 flame nodes...
+1376763469.96: Got tick command
+1376763469.96: Tick update:0.619886
+1376763472.15: Got tick command
+1376763472.15: Tick update:0.176705
+1376763475.33: Got tick command
+1376763475.34: Tick update:0.1
+1376763486.52: Got tick command
+1376763486.53: Tick update:0.869886
+1376763496.06: Got tick command
+1376763496.07: Tick update:0.1
+1376763506.41: Got tick command
+1376763506.41: Tick update:0.405429
+1376763507.01: Got tick command
+1376763507.02: Tick update:0.436905
+1376763507.62: Got tick command
+1376763507.62: Tick update:0.445239

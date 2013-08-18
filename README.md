@@ -23,6 +23,10 @@ Note: You can pass pattern commands on the command line. Use pattern 0 to test s
 
 **sudo python Flasher.py 0 123** #turn on node 123
 
+Pattern 12 tests specific lights (groups of three nodes, mapped to a light):
+
+**sudo python Flasher.py 12 2** #turn on light 2
+
 
 Other useful test patterns:
 
@@ -33,6 +37,9 @@ Other useful test patterns:
 **sudo python Flasher.py 3** #turn on all left side nodes (lights and flames)
 
 **sudo python Flasher.py 4** #turn on all right side nodes (lights and flames)
+
+
+Note: Flame nodes will not light unless app is connected and sending commands (see Protocol below)
 
 To connect to the socket server
 -------------------------------

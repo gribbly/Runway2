@@ -1,7 +1,7 @@
 import sys
 import math
 import time
-from random import randint
+import random
 
 #physical
 nodeMap = []
@@ -229,54 +229,40 @@ def sharedCreate(ledStrip):
 		nodeStates.append(0)
 
 def showNode(n):
-	global rcTick, rcNextTick
-	if time.time() > rcNextTick:
-		rcNextTick = time.time() + rcTick
+	if checkTick():
 		nodeStates[n] = rcLightDuration + rcLightFadeTime
 
 def showLights():
-	global rcTick, rcNextTick
-	if time.time() > rcNextTick:
-		rcNextTick = time.time() + rcTick
+	if checkTick():
 		for i in range(0,len(lightNodesAll)):
 			nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeTime
 
 def showFlames():
-	global rcTick, rcNextTick
-	if time.time() > rcNextTick:
-		rcNextTick = time.time() + rcTick
+	if checkTick():
 		for i in range(0,len(flameNodesAll)):
 			nodeStates[flameNodesAll[i]] = rcFlameDuration
 		
 def showLeftSideAll():
-	global rcTick, rcNextTick
 	global lightNodesLeft, lightNodesRight, lightNodesPerSide
 	global flameNodesLeft, flameNodesRight, flameNodesPerSide
-
-	if time.time() > rcNextTick:
-		rcNextTick = time.time() + rcTick
+	if checkTick():
 		for i in range(0,lightNodesPerSide):
 			nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeTime	
 		for i in range(0,flameNodesPerSide):
 			nodeStates[flameNodesAll[i]] = rcFlameDuration
 
 def showRightSideAll():
-	global rcTick, rcNextTick
 	global lightNodesLeft, lightNodesRight, lightNodesPerSide
 	global flameNodesLeft, flameNodesRight, flameNodesPerSide
-
-	if time.time() > rcNextTick:
-		rcNextTick = time.time() + rcTick
+	if checkTick():
 		for i in range(lightNodesPerSide, len(lightNodesAll)):
 			nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeTime	
 		for i in range(flameNodesPerSide , len(flameNodesAll)):
 			nodeStates[flameNodesAll[i]] = rcFlameDuration
 
-def chaseLights1():
-	global rcTick, rcNextTick
+def chaseNodeSimple():
 	global rcIndex1
-	if time.time() > rcNextTick:
-		rcNextTick = time.time() + rcTick
+	if checkTick():
 		for i in range(0,len(lightNodesAll)):
 			if i == rcIndex1:
 				nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeTime
@@ -284,31 +270,31 @@ def chaseLights1():
 		if rcIndex1 > len(lightNodesAll):
 			rcIndex1 = 0
 
-def chaseLights2():
+def chaseNodeDual():
 	global rcIndex1, lightNodesLeft, lightNodesRight, lightNodesPerSide
-	for i in range(0,lightNodesPerSide):
-		if i == rcIndex1:
-			nodeStates[lightNodesLeft[i]] = rcLightDuration + rcLightFadeTime
-			nodeStates[lightNodesRight[i]] = rcLightDuration + rcLightFadeTime
-	rcIndex1 += 1
-	if rcIndex1 > lightNodesPerSide:
-		rcIndex1 = 0
+	if checkTick():
+		for i in range(0,lightNodesPerSide):
+			if i == rcIndex1:
+				nodeStates[lightNodesLeft[i]] = rcLightDuration + rcLightFadeTime
+				nodeStates[lightNodesRight[i]] = rcLightDuration + rcLightFadeTime
+		rcIndex1 += 1
+		if rcIndex1 > lightNodesPerSide:
+			rcIndex1 = 0
 
-def chaseLights3():
+def chaseNodeDualReverse():
 	global rcIndex1, lightNodesLeft, lightNodesRight, lightNodesPerSide
-	for i in range(lightNodesPerSide-1, 0, -1):
-		if i == rcIndex1:
-			nodeStates[lightNodesLeft[i]] = rcLightDuration + rcLightFadeTime
-			nodeStates[lightNodesRight[i]] = rcLightDuration + rcLightFadeTime
-	rcIndex1 -= 1
-	if rcIndex1 < 0:
-		rcIndex1 = lightNodesPerSide-1
+	if checkTick():
+		for i in range(lightNodesPerSide-1, 0, -1):
+			if i == rcIndex1:
+				nodeStates[lightNodesLeft[i]] = rcLightDuration + rcLightFadeTime
+				nodeStates[lightNodesRight[i]] = rcLightDuration + rcLightFadeTime
+		rcIndex1 -= 1
+		if rcIndex1 < 0:
+			rcIndex1 = lightNodesPerSide-1
 		
-def chaseLights4(n):
-	global rcTick, rcNextTick
+def chaseMultiNodeDual(n):
 	global rcIndex1, lightNodesLeft, lightNodesRight, lightNodesPerSide
-	if time.time() > rcNextTick:
-		rcNextTick = time.time() + rcTick
+	if checkTick():
 		if rcIndex1 > n - 1:
 			rcIndex1 = 0
 		for i in range(0, lightNodesPerSide - rcIndex1):
@@ -317,7 +303,7 @@ def chaseLights4(n):
 				nodeStates[lightNodesRight[i + rcIndex1]] = rcLightDuration + rcLightFadeTime
 		rcIndex1 += 1
 
-def chaseLights5():
+def chaseLightSimple():
 	#light simple chaser
 	global rcIndex1
 	if checkTick():
@@ -330,7 +316,7 @@ def chaseLights5():
 				pass
 		rcIndex1 += 1
 
-def chaseLights6():
+def chaseLightCircuit():
 	#light circle chaser
 	global rcIndex1
 	if checkTick():
@@ -344,7 +330,7 @@ def chaseLights6():
 				pass
 		rcIndex1 += 1
 
-def chaseLights7():
+def chaseLightDual():
 	#light dual chaser
 	global rcIndex1
 	if checkTick():
@@ -360,7 +346,7 @@ def chaseLights7():
 				pass
 		rcIndex1 += 1
 
-def chaseLights8(n):
+def chaseMultiLightDual(n):
 	#light dual chaser, every n lights
 	global rcIndex1
 	if checkTick():
@@ -391,6 +377,31 @@ def showLogicalLight(n):
 				activateLight(i)
 			else:
 				pass
+
+def sillyRabbits1():
+	global rcIndex1, rcIndex2, rcIndex3, rcIndex4, rcNextEvent1
+	if checkTick():
+		if time.time() > rcNextEvent1:
+			rcIndex3 = random.randint(0, len(lightsAll))
+			rcIndex4 = rcIndex3 + random.randint(-3, 3)
+			rcIndex4 = max(min(rcIndex4, len(lightsAll)), 0)
+			print 'rcIndex3 = {0}, rcIndex4 = {1}'.format(rcIndex3, rcIndex4)
+			rcNextEvent1 = time.time() + random.uniform(2.5,6.0)
+		if rcIndex1 < rcIndex3:
+			rcIndex1 += 1
+		elif rcIndex1 > rcIndex3:
+			rcIndex1 -= 1
+		if rcIndex2 < rcIndex4:
+			rcIndex2 += 1
+		elif rcIndex2 > rcIndex4:
+			rcIndex2 -= 1
+		
+		if abs(rcIndex1 - rcIndex2) < 5:
+			rcIndex3 = random.randint(0, len(lightsAll))
+
+		activateLight(rcIndex1)
+		activateLight(rcIndex2)
+
 
 def clear():
 	for i in range(0,len(nodeMap)):
@@ -511,7 +522,7 @@ def changeColor(c):
 		pixelOn = pixelBlue
 
 def getRandomColor():
-	i = randint(0,4)
+	i = random.randint(0,4)
 	if i == 0:
 		return pixelBlue
 	elif i == 1:
@@ -530,7 +541,7 @@ def getNodeFromFlameNumber(n):
 	return node1
 
 def coinToss():
-	if randint(0,1) == 0:
+	if random.randint(0,1) == 0:
 		return False
 	else:
 		return True

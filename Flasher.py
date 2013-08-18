@@ -1,6 +1,6 @@
 #tweaks
-nodes = 292 #should be 292
-camTestRig = False #should be False
+nodes = 124 #should be 292
+camTestRig = True #should be False
 useRunwayControl = True #should be True
 fakeMode = False #should be False
 noServer = False #should be False
@@ -205,25 +205,27 @@ while True:
 			elif pattern == 4:
 				RunwayControl.showRightSideAll()
 			elif pattern == 5:
-				RunwayControl.chaseLights1()	
+				RunwayControl.chaseNodeSimple()	
 			elif pattern == 6:
-				RunwayControl.chaseLights2()
+				RunwayControl.chaseNodeDual()
 			elif pattern == 7:
-				RunwayControl.chaseLights3()
+				RunwayControl.chaseNodeDualReverse()
 			elif pattern == 8:
-				RunwayControl.chaseLights4(lightGap) #chase every nth node
+				RunwayControl.chaseMultiNodeDual(lightGap) #chase every nth node
 			elif pattern == 9:
-				RunwayControl.chaseLights5() #chase by lights
+				RunwayControl.chaseLightSimple() #chase by lights
 			elif pattern == 10:
-				RunwayControl.chaseLights6()
+				RunwayControl.chaseLightCircuit()
 			elif pattern == 11:
 				RunwayControl.twinkleAllLights()
 			elif pattern == 12:
 				RunwayControl.showLogicalLight(debugN)
 			elif pattern == 13:
-				RunwayControl.chaseLights7()				
+				RunwayControl.chaseLightDual()				
 			elif pattern == 14:
-				RunwayControl.chaseLights8(lightGap)
+				RunwayControl.chaseMultiLightDual(lightGap)
+			elif pattern == 15:
+				RunwayControl.sillyRabbits1()
 			else:
 				log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 1 #set to something sane

@@ -46,7 +46,7 @@ To connect to the socket server
 
 Protocol
 --------
-**alive=1** //dead man's switch. If I don't get this within 15 seconds, I'll switch to "screensaver mode" (no fire)
+**alive=1** //dead man's switch. If I don't get this (or some other command) for 20 seconds, fire control is disabled (pi will not light fire node pixels, regardless of pattern, etc.)
 
 **pattern=n**
 

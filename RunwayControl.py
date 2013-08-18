@@ -42,6 +42,7 @@ rcIndex4 = 0
 rcNextEvent1 = 0
 rcColorModeRainbow = False
 rcColorModeEq = False
+rcAllowFire = False
 
 #colors
 pixelWhite = [255,255,255]
@@ -517,9 +518,9 @@ def activateLight(i):
 			print "index error 2"
 
 def update(ledStrip):
-	global lightFadeTime, pixelOn, lightColorsAll
-	for i in range(0,len(nodeMap)):
+	global lightFadeTime, pixelOn, pixelFlame, lightColorsAll
 
+	for i in range(0,len(nodeMap)):
 		#color mapping
 		if rcColorModeEq == True:
 			j = float(i)/len(nodeMap)
@@ -572,6 +573,15 @@ def changeFlameDuration(n):
 	global rcFlameDuration
 	rcFlameDuration = max(min(n, 3.0), 0.005)
 	print "RunwayControl - flame duration is now {0}".format(rcFlameDuration)
+	
+def changeAllowFlame(b):
+	global rcAllowFire, pixelFlame, pixelWhite, pixelOff
+	rcAllowFire = b
+	if rcAllowFire == True:
+		pixelFlame = pixelWhite
+	else:
+		pixelFlame = pixelOff
+	print "RunwayControl - flame control = " + str(rcAllowFire)
 	
 def changeColor(c):
 	global pixelOn

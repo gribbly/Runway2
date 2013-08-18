@@ -1,6 +1,6 @@
 #tweaks
-nodes = 292 #should be 292
-camTestRig = False #should be False
+nodes = 124 #should be 292
+camTestRig = True #should be False
 useRunwayControl = True #should be True
 fakeMode = False #should be False
 noServer = False #should be False
@@ -21,6 +21,8 @@ fingerLights = []
 fingerFlames = []
 debugTickCounter = 0
 clearCounter = 0
+appConnectTimer = -1
+appConnected = False
 
 import sys
 import time
@@ -110,6 +112,7 @@ RunwayControl.changeLightDuration(lightDuration)
 RunwayControl.changeFlameDuration(flameDuration)
 RunwayControl.changeLightFadeTime(lightFadeTime)
 RunwayControl.changeColor(startColor)
+RunwayControl.changeAllowFlame(False)
 
 while True:	
 	if noServer == False:
@@ -119,6 +122,11 @@ while True:
 		except Empty:
 			pass
 		else: # got line
+			appConnectTimer = 20
+			if appConnected == False:
+				appConnected = True
+				RunwayControl.changeAllowFlame(True)
+
 			line = line.strip()
 			appInput = line.split(',')
 			print appInput
@@ -127,7 +135,12 @@ while True:
 				command = input.split('=')
 				if len(command) < 2:
 					break #filter out commands that aren't in the form x=y
-				
+
+				if command[0] == 'alive':
+					try: 
+						pass
+					except:
+						log_event('Bad alive input: ' + str(line))		
 				if command[0] == 'tick':
 					try: 
 						#log_event('Got tick command')
@@ -195,6 +208,15 @@ while True:
 
 	if time.time() > nextFixedTick:
 		nextFixedTick = time.time() + fixedTick
+		
+		if appConnectTimer > -1:
+			appConnectTimer -= fixedTick
+			if appConnectTimer < 5:
+				print 'appConnectTimer = {0:.2f}'.format(appConnectTimer)
+		else:
+			if appConnected == True:
+				appConnected = False
+				RunwayControl.changeAllowFlame(False)
 
 		if useRunwayControl == True:
 			RunwayControl.decrementDurations(fixedTick)

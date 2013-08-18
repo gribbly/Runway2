@@ -1,6 +1,6 @@
 #tweaks
-nodes = 124 #should be 292
-camTestRig = True #should be False
+nodes = 292 #should be 292
+camTestRig = False #should be False
 useRunwayControl = True #should be True
 fakeMode = False #should be False
 noServer = False #should be False
@@ -170,7 +170,7 @@ while True:
 						if lightGap < 1:
 							lightGap = 1
 					except:
-						log_event('Bad light fade time input: ' + str(line))
+						log_event('Bad lightgap: ' + str(line))
 				elif command[0] == 'clear':
 					try:
 						RunwayControl.clearImmediate()

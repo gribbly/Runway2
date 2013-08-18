@@ -70,7 +70,6 @@ If we need to handle multiple parameters per message, comma separate them:
 
 **light=1,light=2,light=3**
 
-
 Setting SPI clock speed:
 ----------------
 Mega hack! Compile and run spidev_test.c:

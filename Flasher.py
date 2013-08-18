@@ -141,7 +141,7 @@ while True:
 						pass
 					except:
 						log_event('Bad alive input: ' + str(line))		
-				if command[0] == 'tick':
+				elif command[0] == 'tick':
 					try: 
 						#log_event('Got tick command')
 						adjustableTick = float(command[1].rstrip())
@@ -201,19 +201,22 @@ while True:
 						log_event('Bad color: ' + str(line))	
 				elif command[0] == 'clear':
 					try:
-						RunwayControl.clearImmediate()
+						RunwayControl.clearImmediate(ledStrip)
 						fingerLights = []
 						fingerFlames = []
 					except:
 						log_event('Bad clear input: ' + str(line))
 				elif command[0] == 'panic':
 					try:
-						RunwayControl.clearImmediate()
+						pattern = 0
+						RunwayControl.clearImmediate(ledStrip)
 						RunwayControl.changeAllowFlame(False)
 						fingerLights = []
 						fingerFlames = []
 					except:
 						log_event('Bad panic input: ' + str(line))
+				else:
+					pass
 
 	if time.time() > nextFixedTick:
 		nextFixedTick = time.time() + fixedTick

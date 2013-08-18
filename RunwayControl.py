@@ -529,9 +529,10 @@ def clear():
 	for i in range(0,len(nodeMap)):
 		nodeStates[i] = 0
 
-def clearImmediate():
+def clearImmediate(ledStrip):
+	print 'RunwayControl - clearImmediate()'
 	clear()
-	update()
+	update(ledStrip)
 
 def decrementDurations(t):
 	for i in range(0,len(nodeMap)):

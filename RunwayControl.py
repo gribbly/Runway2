@@ -518,7 +518,7 @@ def activateLight(i):
 			print "index error 2"
 
 def update(ledStrip):
-	global lightFadeTime, pixelOn, pixelFlame, lightColorsAll
+	global lightFadeTime, pixelOn, pixelFlame, lightColorsAll, rcColorModeEq
 
 	for i in range(0,len(nodeMap)):
 		#color mapping
@@ -584,7 +584,7 @@ def changeAllowFlame(b):
 	print "RunwayControl - flame control = " + str(rcAllowFire)
 	
 def changeColor(c):
-	global pixelOn
+	global pixelOn, rcColorModeEq, rcColorModeRainbow
 	print "RunwayControl - switching color to " + c
 	rcColorModeRainbow = False
 	rcColorModeEq = False
@@ -598,6 +598,8 @@ def changeColor(c):
 		pixelOn = pixelYellow
 	elif c == "green":
 		pixelOn = pixelGreen
+	elif c == "pink":
+		pixelOn = pixelPink
 	elif c == "random":
 		pixelOn = getRandomColor()
 	elif c == "rainbow":

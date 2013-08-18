@@ -64,7 +64,9 @@ Protocol
 
 **lightgap=n** //(int) gap between lights (used in some patterns). Clamped to min = 1.
 
-**color=<color>** //change lights to this color. Supported: default, blue, white, red, green, yellow, rainbow (NOTE: rainbow mode doesn't work properly yet)
+**color=<color>** //change lights to this color. Supported: default, blue, white, red, green, yellow, pink, random (picks a random color), eq (eq color scheme!)
+
+**eq=n** //current EQ level (send volume from mic). Expects a number between 0 and 42 (number of lights on one side). Use with "fillUpLightsDualEq".
 
 **clear=1** //send to instantly turn everything off
 

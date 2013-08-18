@@ -21,6 +21,9 @@ lightsAll = []
 lightsLeft = []
 lightsRight = []
 lightsPerSide = 0
+lightColorsAll = []
+lightColorsLeft = []
+lightColorsRight = []
 
 #logging
 events = []
@@ -37,12 +40,14 @@ rcIndex2 = 0
 rcIndex3 = 0
 rcIndex4 = 0
 rcNextEvent1 = 0
-rcRainbowMode = False
+rcColorModeRainbow = False
+rcColorModeEq = False
 
 #colors
 pixelWhite = [255,255,255]
 pixelBlue = [0,255,0]
-pixelYellow = [255,255,0]
+pixelPink = [255,255,0]
+pixelYellow = [255,0,255]
 pixelRed = [255,0,0]
 pixelGreen = [0,0,255]
 pixelOff = [0,0,0]
@@ -227,6 +232,31 @@ def sharedCreate(ledStrip):
 	#init nodeStates
 	for i in range(0, len(nodeMap)):
 		nodeStates.append(0)
+		
+	#init color maps...
+	print len(lightsAll) / 2
+	for i in range(0, len(lightsAll) / 2):
+		segmentLength = (len(lightsAll) / 2) / 3
+		if i < segmentLength:
+			print '{0} - segment 1'.format(i)
+			lightColorsLeft.append(pixelGreen)
+			lightColorsRight.append(pixelGreen)
+		elif i <= (segmentLength * 2):
+			print '{0} - segment 2'.format(i)
+			lightColorsLeft.append(pixelYellow)
+			lightColorsRight.append(pixelYellow)
+		else:
+			print '{0} - segment 3'.format(i)
+			lightColorsLeft.append(pixelRed)
+			lightColorsRight.append(pixelRed)
+
+	lightColorsRight.reverse()
+	global lightColorsAll
+	lightColorsAll = lightColorsLeft + lightColorsRight
+		
+	print 'LIGHT COLORS:'
+	for i in range(0, len(lightColorsAll)):
+		print '{0} - [{1},{2},{3}]'.format(i, lightColorsAll[i][0], lightColorsAll[i][1], lightColorsAll[i][2])
 
 def showNode(n):
 	if checkTick():
@@ -385,7 +415,7 @@ def sillyRabbits1():
 			rcIndex3 = random.randint(0, len(lightsAll))
 			rcIndex4 = rcIndex3 + random.randint(-3, 3)
 			rcIndex4 = max(min(rcIndex4, len(lightsAll)), 0)
-			print 'rcIndex3 = {0}, rcIndex4 = {1}'.format(rcIndex3, rcIndex4)
+			#print 'rcIndex3 = {0}, rcIndex4 = {1}'.format(rcIndex3, rcIndex4)
 			rcNextEvent1 = time.time() + random.uniform(2.5,6.0)
 		if rcIndex1 < rcIndex3:
 			rcIndex1 += 1
@@ -397,11 +427,50 @@ def sillyRabbits1():
 			rcIndex2 -= 1
 		
 		if abs(rcIndex1 - rcIndex2) < 5:
+			#print "woah!"
 			rcIndex3 = random.randint(0, len(lightsAll))
 
 		activateLight(rcIndex1)
 		activateLight(rcIndex2)
 
+def fillUpLightsSimple():
+	global rcIndex1
+	if checkTick():
+		if rcIndex1 > len(lightsAll):
+			rcIndex1 = 0
+		for i in range(0,len(lightsAll)):
+			if i < rcIndex1:
+				activateLight(i)
+			else:
+				pass
+		rcIndex1 += 1		
+
+def fillUpLightsDual():
+	global rcIndex1
+	if checkTick():
+		if rcIndex1 > len(lightsAll)/2:
+			rcIndex1 = 0
+		for i in range(0,len(lightsAll)/2):
+			if i < rcIndex1:
+				leftI = i
+				rightI = (len(lightsAll) - 1) - i
+				activateLight(leftI)
+				activateLight(rightI)
+			else:
+				pass
+		rcIndex1 += 1	
+
+def fillUpLightsDualEq(e):
+	if checkTick():
+		e = max(min(e, len(lightsAll)/2), 0)
+		for i in range(0,len(lightsAll)/2):
+			if i <= e:
+				leftI = i
+				rightI = (len(lightsAll) - 1) - i
+				activateLight(leftI)
+				activateLight(rightI)
+			else:
+				pass	
 
 def clear():
 	for i in range(0,len(nodeMap)):
@@ -448,17 +517,21 @@ def activateLight(i):
 			print "index error 2"
 
 def update(ledStrip):
-	global lightFadeTime, pixelOn
-	if rcRainbowMode == True:
-		pixelOn = getRandomColor()
-
+	global lightFadeTime, pixelOn, lightColorsAll
 	for i in range(0,len(nodeMap)):
+
+		#color mapping
+		if rcColorModeEq == True:
+			j = float(i)/len(nodeMap)
+			k = int(j * 35)
+			pixelOn = lightColorsAll[k]
+
 		if nodeStates[i] > rcLightFadeTime:
-			#debug
 			if nodeMap[i] == 'F':
 				ledStrip.setPixel(i, pixelFlame)
 			else:
 				ledStrip.setPixel(i, pixelOn)
+
 		elif nodeStates[i] > 0 and nodeStates[i] <= rcLightFadeTime:
 			if nodeMap[i] == 'F':
 				ledStrip.setPixel(i, pixelFlame)
@@ -503,7 +576,8 @@ def changeFlameDuration(n):
 def changeColor(c):
 	global pixelOn
 	print "RunwayControl - switching color to " + c
-	rcRainbowMode = False
+	rcColorModeRainbow = False
+	rcColorModeEq = False
 	if c == "default" or c == "blue":
 		pixelOn = pixelBlue
 	elif c == "white":
@@ -514,15 +588,18 @@ def changeColor(c):
 		pixelOn = pixelYellow
 	elif c == "green":
 		pixelOn = pixelGreen
-	elif c == "rainbow":
-		rcRainbowMode = True
+	elif c == "random":
 		pixelOn = getRandomColor()
+	elif c == "rainbow":
+		rcColorModeRainbow = True
+	elif c == "eq":
+		rcColorModeEq = True
 	else:
 		print "RunwayControl - WARNING: Unknown color " + c
 		pixelOn = pixelBlue
 
 def getRandomColor():
-	i = random.randint(0,4)
+	i = random.randint(0,5)
 	if i == 0:
 		return pixelBlue
 	elif i == 1:
@@ -533,6 +610,8 @@ def getRandomColor():
 		return pixelGreen
 	elif i == 4:
 		return pixelYellow
+	elif i == 5:
+		return pixelPink
 	else:
 		return pixelBlue
 	

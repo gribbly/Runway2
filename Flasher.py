@@ -1,6 +1,6 @@
 #tweaks
-nodes = 124 #should be 292
-camTestRig = True #should be False
+nodes = 292 #should be 292
+camTestRig = False #should be False
 useRunwayControl = True #should be True
 fakeMode = False #should be False
 noServer = False #should be False
@@ -8,11 +8,12 @@ noServer = False #should be False
 #starting values for realtime vars (app can change these)
 startColor = "blue"
 startPattern = 11 #tbd
-adjustableTick = 0.1 #starting value
-lightDuration = 0.01666666666667 #should be 0.05
-flameDuration = 0.01666666666667 #should be 0.05
-lightFadeTime = 0.1 #should be 0.2
+adjustableTick = 0.2 #starting value
+lightDuration = 0.05 #should be 0.05
+flameDuration = 0.05 #should be 0.05
+lightFadeTime = 0.2 #should be 0.2
 lightGap = 3
+lightEq = 0
 
 #internal stuff (don't change this)
 fixedTick = 0.01666666666667 #60fps
@@ -23,6 +24,7 @@ clearCounter = 0
 
 import sys
 import time
+import random
 if fakeMode == False:
 	from LedStrip_WS2801 import LedStrip_WS2801
 else:
@@ -177,7 +179,12 @@ while True:
 					try:
 						RunwayControl.changeColor(int(command[1].rstrip()))
 					except:
-						log_event('Bad color: ' + str(line))						
+						log_event('Bad color: ' + str(line))
+				elif command[0] == 'eq':
+					try:
+						RunwayControl.changeColor(int(command[1].rstrip()))
+					except:
+						log_event('Bad color: ' + str(line))	
 				elif command[0] == 'clear':
 					try:
 						RunwayControl.clearImmediate()
@@ -194,7 +201,7 @@ while True:
 		
 			if pattern == -1:
 				RunwayControl.clear()				
-			if pattern == 0:
+			if pattern == 0: #debugging
 				RunwayControl.showNode(debugN)
 			elif pattern == 1:
 				RunwayControl.showLights()
@@ -211,14 +218,14 @@ while True:
 			elif pattern == 7:
 				RunwayControl.chaseNodeDualReverse()
 			elif pattern == 8:
-				RunwayControl.chaseMultiNodeDual(lightGap) #chase every nth node
+				RunwayControl.chaseMultiNodeDual(lightGap)
 			elif pattern == 9:
-				RunwayControl.chaseLightSimple() #chase by lights
+				RunwayControl.chaseLightSimple()
 			elif pattern == 10:
 				RunwayControl.chaseLightCircuit()
 			elif pattern == 11:
 				RunwayControl.twinkleAllLights()
-			elif pattern == 12:
+			elif pattern == 12: #debugging
 				RunwayControl.showLogicalLight(debugN)
 			elif pattern == 13:
 				RunwayControl.chaseLightDual()				
@@ -226,6 +233,15 @@ while True:
 				RunwayControl.chaseMultiLightDual(lightGap)
 			elif pattern == 15:
 				RunwayControl.sillyRabbits1()
+			elif pattern == 16:
+				RunwayControl.fillUpLightsSimple()
+			elif pattern == 17:
+				RunwayControl.fillUpLightsDual()
+			elif pattern == 18: 
+				if camTestRig == True:
+					lightEq = random.randint(0,18)
+				RunwayControl.fillUpLightsDualEq(lightEq)
+				
 			else:
 				log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 1 #set to something sane

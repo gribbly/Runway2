@@ -7,7 +7,7 @@ noServer = False #should be False
 
 #starting values for realtime vars (app can change these)
 startColor = "blue"
-startPattern = 14 #tbd
+startPattern = 11 #tbd
 adjustableTick = 0.1 #starting value
 lightDuration = 0.01666666666667 #should be 0.05
 flameDuration = 0.01666666666667 #should be 0.05
@@ -177,7 +177,7 @@ while True:
 					try:
 						RunwayControl.changeColor(int(command[1].rstrip()))
 					except:
-						log_event('Bad lightgap: ' + str(line))						
+						log_event('Bad color: ' + str(line))						
 				elif command[0] == 'clear':
 					try:
 						RunwayControl.clearImmediate()

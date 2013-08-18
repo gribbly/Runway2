@@ -34,6 +34,9 @@ rcLightFadeTime = 0.5
 rcBool = False
 rcIndex1 = 0
 rcIndex2 = 0
+rcIndex3 = 0
+rcIndex4 = 0
+rcNextEvent1 = 0
 rcRainbowMode = False
 
 #colors
@@ -401,16 +404,13 @@ def decrementDurations(t):
 	for i in range(0,len(nodeMap)):
 		nodeStates[i] -= t
 
-def updateFingerLights(l):
-	for i in range(0, len(l)):
-		requestedLightNumber = l[i]
-		requestedLightNodes = getNodesFromLightNumber(requestedLightNumber)
-		for i in range(0, len(requestedLightNodes)):
-			nodeStates[lightNodesAll[requestedLightNodes[i]]] = rcLightDuration + rcLightFadeTime
+def updateFingerLights(a):
+	for i in range(0, len(a)):
+		activateLight(a[i] - 1)
 
-def updateFingerFlames(f):
-	for i in range(0, len(f)):
-		requestedFlameNumber = f[i]
+def updateFingerFlames(a):
+	for i in range(0, len(a)):
+		requestedFlameNumber = a[i]
 		requestedFlameNode = getNodeFromFlameNumber(requestedFlameNumber)
 		nodeStates[flameNodesAll[requestedFlameNode]] = rcFlameDuration
 
@@ -524,13 +524,6 @@ def getRandomColor():
 		return pixelYellow
 	else:
 		return pixelBlue
-
-		
-def getNodesFromLightNumber(n):
-	node1 = (3 * n) - 1
-	node2 = node1 - 1
-	node3 = node1 - 2
-	return [node1, node2, node3]
 	
 def getNodeFromFlameNumber(n):
 	node1 = n - 1

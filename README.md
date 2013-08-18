@@ -62,6 +62,8 @@ Protocol
 
 **fadetime=n** //light fade duration. Set to 0 for no fade.
 
+**lightgap=n** //(int) gap between lights (used in some patterns). Clamped to min = 1.
+
 **clear=1** //send to instantly turn everything off
 
 If we need to handle multiple parameters per message, comma separate them:

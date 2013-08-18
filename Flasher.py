@@ -1,6 +1,6 @@
 #tweaks
-nodes = 292 #should be 292
-camTestRig = False #should be False
+nodes = 124 #should be 292
+camTestRig = True #should be False
 useRunwayControl = True #should be True
 fakeMode = False #should be False
 noServer = False #should be False
@@ -11,7 +11,7 @@ adjustableTick = 0.2 #starting value
 lightDuration = 0.01666666666667 #should be 0.05
 flameDuration = 0.01666666666667 #should be 0.05
 lightFadeTime = 0.1 #should be 0.2
-
+lightGap = 3
 
 #internal stuff (don't change this)
 fixedTick = 0.01666666666667 #60fps
@@ -164,6 +164,13 @@ while True:
 						RunwayControl.changeLightFadeTime(int(command[1].rstrip()))
 					except:
 						log_event('Bad light fade time input: ' + str(line))
+				elif command[0] == 'lightgap':
+					try:
+						lightGap = (int(command[1].rstrip()))
+						if lightGap < 1:
+							lightGap = 1
+					except:
+						log_event('Bad light fade time input: ' + str(line))
 				elif command[0] == 'clear':
 					try:
 						RunwayControl.clearImmediate()
@@ -197,7 +204,7 @@ while True:
 			elif pattern == 7:
 				RunwayControl.chaseLights3()
 			elif pattern == 8:
-				RunwayControl.chaseLights4(3) #chase every nth node
+				RunwayControl.chaseLights4(lightGap) #chase every nth node
 			elif pattern == 9:
 				RunwayControl.chaseLights5() #chase by lights
 			elif pattern == 10:
@@ -209,7 +216,7 @@ while True:
 			elif pattern == 13:
 				RunwayControl.chaseLights7()				
 			elif pattern == 14:
-				RunwayControl.chaseLights8(5)
+				RunwayControl.chaseLights8(lightGap)
 			else:
 				log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 1 #set to something sane

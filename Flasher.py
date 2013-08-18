@@ -7,11 +7,11 @@ noServer = False #should be False
 
 #starting values for realtime vars (app can change these)
 startColor = "blue"
-startPattern = 19 #tbd
+startPattern = 21 #tbd
 adjustableTick = 0.01 #starting value
 lightDuration = 0.05 #should be 0.05
 flameDuration = 0.05 #should be 0.05
-lightFadeTime = 0 #should be 0.2
+lightFadeTime = 0
 lightGap = 3
 lightEq = 0
 
@@ -137,10 +137,7 @@ while True:
 					break #filter out commands that aren't in the form x=y
 
 				if command[0] == 'alive':
-					try: 
-						pass
-					except:
-						log_event('Bad alive input: ' + str(line))		
+					pass
 				elif command[0] == 'tick':
 					try: 
 						#log_event('Got tick command')
@@ -188,33 +185,27 @@ while True:
 						if lightGap < 1:
 							lightGap = 1
 					except:
-						log_event('Bad lightgap: ' + str(line))
+						log_event('Bad lightgap command: ' + str(line))
 				elif command[0] == 'color':
 					try:
 						RunwayControl.changeColor(str(command[1].rstrip()))
 					except:
-						log_event('Bad color: ' + str(line))
+						log_event('Bad color command: ' + str(line))
 				elif command[0] == 'eq':
 					try:
 						lightEq = (int(command[1].rstrip()))
 					except:
-						log_event('Bad color: ' + str(line))	
+						log_event('Bad eq command: ' + str(line))	
 				elif command[0] == 'clear':
-					try:
-						RunwayControl.clearImmediate(ledStrip)
-						fingerLights = []
-						fingerFlames = []
-					except:
-						log_event('Bad clear input: ' + str(line))
+					RunwayControl.clearImmediate(ledStrip)
+					fingerLights = []
+					fingerFlames = []
 				elif command[0] == 'panic':
-					try:
-						pattern = 0
-						RunwayControl.clearImmediate(ledStrip)
-						RunwayControl.changeAllowFlame(False)
-						fingerLights = []
-						fingerFlames = []
-					except:
-						log_event('Bad panic input: ' + str(line))
+					pattern = 0
+					RunwayControl.clearImmediate(ledStrip)
+					RunwayControl.changeAllowFlame(False)
+					fingerLights = []
+					fingerFlames = []
 				else:
 					pass
 
@@ -277,10 +268,24 @@ while True:
 				RunwayControl.fillUpLightsDualEq(lightEq)
 			elif pattern == 19:
 				RunwayControl.lightAndFireChaserSimple()
-								
+			elif pattern == 20:
+				RunwayControl.lightAndFireChaserDual()
+			elif pattern == 21:
+				RunwayControl.lightAndFireChaserDualReverse()
+			elif pattern == 22:
+				RunwayControl.lightAndFireChaserDual()
+				RunwayControl.lightAndFireChaserDualReverse()
+			elif pattern == 23:
+				RunwayControl.twinkleAllFlames()
+			elif pattern == 24:
+				RunwayControl.twinkleAllLights()
+				RunwayControl.twinkleAllFlames()
+			elif pattern == 25:
+				RunwayControl.twinkleAllLightsRandomFade()
+			
 			else:
 				log_event('WARNING! bad pattern number {0}'.format(pattern))
-				pattern = 1 #set to something sane
+				pattern = 13 #set to something sane
 
 			if len(fingerLights) > 0:
 				RunwayControl.updateFingerLights(fingerLights)

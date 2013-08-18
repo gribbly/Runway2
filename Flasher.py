@@ -6,7 +6,7 @@ fakeMode = False #should be False
 noServer = False #should be False
 
 #starting values for realtime vars (app can change these)
-startColor = "blue"
+startColor = "rainbow"
 startPattern = 9 #tbd
 adjustableTick = 0.2 #starting value
 lightDuration = 0.01666666666667 #should be 0.05

@@ -34,6 +34,7 @@ rcLightFadeTime = 0.5
 rcBool = False
 rcIndex1 = 0
 rcIndex2 = 0
+rcRainbowMode = False
 
 #colors
 pixelWhite = [255,255,255]
@@ -436,7 +437,10 @@ def activateLight(i):
 			print "index error 2"
 
 def update(ledStrip):
-	global lightFadeTime
+	global lightFadeTime, pixelOn
+	if rcRainbowMode == True:
+		pixelOn = getRandomColor()
+
 	for i in range(0,len(nodeMap)):
 		if nodeStates[i] > rcLightFadeTime:
 			#debug
@@ -488,6 +492,7 @@ def changeFlameDuration(n):
 def changeColor(c):
 	global pixelOn
 	print "RunwayControl - switching color to " + c
+	rcRainbowMode = False
 	if c == "default" or c == "blue":
 		pixelOn = pixelBlue
 	elif c == "white":
@@ -499,13 +504,28 @@ def changeColor(c):
 	elif c == "green":
 		pixelOn = pixelGreen
 	elif c == "rainbow":
-		#todo
-		print "RunwayControl - WARNING: This color is not implemented yet: " + c
-		pixelOn = pixelBlue
+		rcRainbowMode = True
+		pixelOn = getRandomColor()
 	else:
 		print "RunwayControl - WARNING: Unknown color " + c
 		pixelOn = pixelBlue
 
+def getRandomColor():
+	i = randint(0,4)
+	if i == 0:
+		return pixelBlue
+	elif i == 1:
+		return pixelWhite
+	elif i == 2:
+		return pixelRed
+	elif i == 3:
+		return pixelGreen
+	elif i == 4:
+		return pixelYellow
+	else:
+		return pixelBlue
+
+		
 def getNodesFromLightNumber(n):
 	node1 = (3 * n) - 1
 	node2 = node1 - 1

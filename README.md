@@ -64,7 +64,7 @@ Protocol
 
 **lightgap=n** //(int) gap between lights (used in some patterns). Clamped to min = 1.
 
-**color=<color>** //change lights to this color. Supported: default, blue, white, red, green, yellow, rainbow
+**color=<color>** //change lights to this color. Supported: default, blue, white, red, green, yellow, rainbow (NOTE: rainbow mode doesn't work properly yet)
 
 **clear=1** //send to instantly turn everything off
 

@@ -171,6 +171,11 @@ while True:
 							lightGap = 1
 					except:
 						log_event('Bad lightgap: ' + str(line))
+				elif command[0] == 'color':
+					try:
+						RunwayControl.changeColor(int(command[1].rstrip()))
+					except:
+						log_event('Bad lightgap: ' + str(line))						
 				elif command[0] == 'clear':
 					try:
 						RunwayControl.clearImmediate()

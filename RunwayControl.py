@@ -484,6 +484,27 @@ def changeFlameDuration(n):
 	global rcFlameDuration
 	rcFlameDuration = max(min(n, 3.0), 0.005)
 	print "RunwayControl - flame duration is now {0}".format(rcFlameDuration)
+	
+def changeColor(c):
+	global pixelOn
+	print "RunwayControl - switching color to " + c
+	if c == "default" or c == "blue":
+		pixelOn = pixelBlue
+	elif c == "white":
+		pixelOn = pixelWhite
+	elif c == "red":
+		pixelOn = pixelRed
+	elif c == "yellow":
+		pixelOn = pixelYellow
+	elif c == "green":
+		pixelOn = pixelGreen
+	elif c == "rainbow":
+		#todo
+		print "RunwayControl - WARNING: This color is not implemented yet: " + c
+		pixelOn = pixelBlue
+	else:
+		print "RunwayControl - WARNING: Unknown color " + c
+		pixelOn = pixelBlue
 
 def getNodesFromLightNumber(n):
 	node1 = (3 * n) - 1

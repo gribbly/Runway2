@@ -6,12 +6,12 @@ fakeMode = False #should be False
 noServer = False #should be False
 
 #starting values for realtime vars (app can change these)
-startColor = "blue"
-startPattern = 11 #tbd
-adjustableTick = 0.2 #starting value
-lightDuration = 0.05 #should be 0.05
+startColor = "eq"
+startPattern = 18 #tbd
+adjustableTick = 0.1 #starting value
+lightDuration = 0.02 #should be 0.05
 flameDuration = 0.05 #should be 0.05
-lightFadeTime = 0.2 #should be 0.2
+lightFadeTime = 2 #should be 0.2
 lightGap = 3
 lightEq = 0
 
@@ -166,14 +166,15 @@ while True:
 						fingerFlames.append(int(command[1].rstrip()))
 					except:
 						log_event('Bad fire input: ' + str(line))
-				elif command[0] == 'ld':
+				elif command[0] == 'ld' or command[0] == 'lightduration':
+					print command
 					try: 
-						RunwayControl.changeLightDuration(int(command[1].rstrip()))
+						RunwayControl.changeLightDuration(float(command[1].rstrip()))
 					except:
 						log_event('Bad light duration input: ' + str(line))
-				elif command[0] == 'fd':
+				elif command[0] == 'fd' or command[0] == 'fireduration':
 					try:
-						RunwayControl.changeFlameDuration(int(command[1].rstrip()))
+						RunwayControl.changeFlameDuration(float(command[1].rstrip()))
 					except:
 						log_event('Bad flame duration input: ' + str(line))
 				elif command[0] == 'fadetime':
@@ -190,12 +191,12 @@ while True:
 						log_event('Bad lightgap: ' + str(line))
 				elif command[0] == 'color':
 					try:
-						RunwayControl.changeColor(int(command[1].rstrip()))
+						RunwayControl.changeColor(str(command[1].rstrip()))
 					except:
 						log_event('Bad color: ' + str(line))
 				elif command[0] == 'eq':
 					try:
-						RunwayControl.changeColor(int(command[1].rstrip()))
+						lightEq = (int(command[1].rstrip()))
 					except:
 						log_event('Bad color: ' + str(line))	
 				elif command[0] == 'clear':

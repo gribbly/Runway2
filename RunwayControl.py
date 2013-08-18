@@ -24,6 +24,9 @@ lightsPerSide = 0
 lightColorsAll = []
 lightColorsLeft = []
 lightColorsRight = []
+lightsAndFire = []
+lightsAndFireLeft = []
+lightsAndFireRight = []
 
 #logging
 events = []
@@ -160,9 +163,7 @@ def createCamTestRig(ledStrip):
 
 def sharedCreate(ledStrip):
 	print "nodeMap:"
-	for i in range(0,len(nodeMap)):
-		#print format(i) + " " + nodeMap[i]
-		print nodeMap[i]
+	print nodeMap
 	
 	#light addresses
 	for	i in range(0,len(nodeMap)):
@@ -175,20 +176,20 @@ def sharedCreate(ledStrip):
 			flameNodesAll.append(i)
 			
 	log_event("Map contains {0} light nodes...".format(len(lightNodesAll)))
-	print 'LIGHTS NODES:'
+	print '\nLIGHT NODES:'
 	print lightNodesAll
 	log_event("Map contains {0} flame nodes...".format(len(flameNodesAll)))
-	print 'FLAME NODES:'
+	print '\nFLAME NODES:'
 	print flameNodesAll
 	
 	#logical lights
 	for i in range(0, len(lightNodesAll), 3):
 		lightsAll.append([lightNodesAll[i],lightNodesAll[i+1],lightNodesAll[i+2]])
 	
-	print 'LIGHTS...'
+	print '\nLIGHTS:'
 	for i in range(0, len(lightsAll)):
-		print 'Light {0}'.format(i + 1)
-		print lightsAll[i]
+		print 'Light {0}: '.format(i + 1) + str(lightsAll[i])
+		#print lightsAll[i]
 	
 	#left and right side lights
 	global lightNodesPerSide, lightsPerSide
@@ -205,10 +206,10 @@ def sharedCreate(ledStrip):
 	lightNodesRight.reverse()
 		
 	log_event("Left side has {0} light nodes...".format(len(lightNodesLeft)))
-	print 'LIGHTS (LEFT SIDE):'
+	print 'LIGHT NODES (LEFT SIDE):'
 	print lightNodesLeft
 	log_event("Right side has {0} light nodes...".format(len(lightNodesRight)))
-	print 'LIGHTS (RIGHT SIDE):'
+	print 'LIGHTS NODES (RIGHT SIDE):'
 	print lightNodesRight
 	
 	#left and right side flames	
@@ -224,37 +225,54 @@ def sharedCreate(ledStrip):
 	flameNodesRight.reverse()
 		
 	log_event("Left side has {0} flame nodes...".format(len(flameNodesLeft)))
-	print 'FLAMES (LEFT SIDE):'
+	print 'FLAME NODES (LEFT SIDE):'
 	print flameNodesLeft
 	log_event("Right side has {0} flame nodes...".format(len(flameNodesRight)))
-	print 'FLAMES (RIGHT SIDE):'
-	print flameNodesRight
-	
+	print 'FLAME NODES (RIGHT SIDE):'
+	print flameNodesRight	
+
 	#init nodeStates
 	for i in range(0, len(nodeMap)):
 		nodeStates.append(0)
 		
-	#init color maps...
-	print len(lightsAll) / 2
-	for i in range(0, len(lightsAll) / 2):
-		segmentLength = (len(lightsAll) / 2) / 3
-		if i < segmentLength:
-			print '{0} - segment 1'.format(i)
-			lightColorsLeft.append(pixelGreen)
-			lightColorsRight.append(pixelGreen)
-		elif i <= (segmentLength * 2):
-			print '{0} - segment 2'.format(i)
-			lightColorsLeft.append(pixelYellow)
-			lightColorsRight.append(pixelYellow)
-		else:
-			print '{0} - segment 3'.format(i)
-			lightColorsLeft.append(pixelRed)
-			lightColorsRight.append(pixelRed)
+	setColorMap("eq")
 
+def setColorMap(s):
+	print 'RunwayControl - setting color map to: ' + s
+
+	for i in range(0, len(lightsAll) / 2):
+		if s == "eq":
+			segmentLength = (len(lightsAll) / 2) / 3
+			if i < segmentLength:
+				#print '{0} - segment 1'.format(i)
+				lightColorsLeft.append(pixelGreen)
+				lightColorsRight.append(pixelGreen)
+			elif i <= (segmentLength * 2):
+				#print '{0} - segment 2'.format(i)
+				lightColorsLeft.append(pixelYellow)
+				lightColorsRight.append(pixelYellow)
+			else:
+				#print '{0} - segment 3'.format(i)
+				lightColorsLeft.append(pixelRed)
+				lightColorsRight.append(pixelRed)
+		else:
+			segmentLength = (len(lightsAll) / 2) / 3
+			if i < segmentLength:
+				#print '{0} - segment 1'.format(i)
+				lightColorsLeft.append(pixelGreen)
+				lightColorsRight.append(pixelGreen)
+			elif i <= (segmentLength * 2):
+				#print '{0} - segment 2'.format(i)
+				lightColorsLeft.append(pixelPink)
+				lightColorsRight.append(pixelPink)
+			else:
+				#print '{0} - segment 3'.format(i)
+				lightColorsLeft.append(pixelBlue)
+				lightColorsRight.append(pixelBlue)
 	lightColorsRight.reverse()
 	global lightColorsAll
 	lightColorsAll = lightColorsLeft + lightColorsRight
-		
+
 	print 'LIGHT COLORS:'
 	for i in range(0, len(lightColorsAll)):
 		print '{0} - [{1},{2},{3}]'.format(i, lightColorsAll[i][0], lightColorsAll[i][1], lightColorsAll[i][2])

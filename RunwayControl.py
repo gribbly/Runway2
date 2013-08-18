@@ -47,6 +47,7 @@ rcIndex4 = 0
 rcNextEvent1 = 0
 rcColorMapEnabled = False
 rcAllowFire = False
+pixelBuffer = []
 
 #colors
 pixelWhite = [255,255,255]
@@ -239,6 +240,10 @@ def sharedCreate(ledStrip):
 		nodeStates.append(0)
 		
 	setColorMap("eq")
+	
+	#init pixel buffer
+	for i in range(0, len(nodeMap)):
+		pixelBuffer.append(pixelOff)
 
 def constructLightsAndFireArrays():
 	global lightsAndFire, lightsAndFireLeft, lightsAndFireRight
@@ -672,7 +677,7 @@ def activateFlame(i):
 def update(ledStrip):
 	global lightFadeTime, pixelOn, pixelFlame, lightColorsAll, rcColorMapEnabled
 
-	for i in range(0,len(nodeMap)):
+	for i in xrange(0,len(nodeMap)):
 		#color mapping
 		if rcColorMapEnabled == True:
 			j = float(i)/len(nodeMap)
@@ -704,6 +709,44 @@ def update(ledStrip):
 			ledStrip.setPixel(i, pixelOff)
 	ledStrip.update()
 	time.sleep(0)
+	
+def update2(ledStrip):
+	#ignores color maps (for now)
+	#experiment with "render and perturb"
+	
+	global pixelBuffer, lightFadeTime, pixelOn, pixelFlame
+	for i in xrange(0,len(nodeMap)):
+		if nodeStates[i] > rcLightFadeTime:
+			if nodeMap[i] == 'F':
+				pixelBuffer[i] = pixelFlame
+			else:
+				pixelBuffer[i] = pixelOn
+
+		elif nodeStates[i] > 0 and nodeStates[i] <= rcLightFadeTime:
+			if nodeMap[i] == 'F':
+				pixelBuffer[i] = pixelFlame
+			else:
+				r = pixelOn[0]
+				g = pixelOn[1]
+				b = pixelOn[2]
+				p = int(nodeStates[i]/rcLightFadeTime * 255)
+				if r > 0:
+					r = p
+				if g > 0:
+					g = p
+				if b > 0:
+					b = p
+				pixelBuffer[i] = [r,g,b]
+		else:
+			pixelBuffer[i] = pixelOff
+			
+	for i in xrange(0, len(pixelBuffer)):
+		if nodeMap[i] in ['1', '2', '3']:
+			#todo: perturb colors here
+			pass
+		ledStrip.setPixel(i, pixelBuffer[i])
+	
+	ledStrip.update()	
 
 def changeTick(n):
 	global rcTick1

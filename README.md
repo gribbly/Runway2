@@ -64,6 +64,8 @@ Protocol
 
 **lightgap=n** //(int) gap between lights (used in some patterns). Clamped to min = 1.
 
+**color=<color>** //change lights to this color. Supported: default, blue, white, red, green, yellow, rainbow
+
 **clear=1** //send to instantly turn everything off
 
 If we need to handle multiple parameters per message, comma separate them:

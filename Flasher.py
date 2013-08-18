@@ -6,12 +6,12 @@ fakeMode = False #should be False
 noServer = False #should be False
 
 #starting values for realtime vars (app can change these)
-startColor = "eq"
-startPattern = 18 #tbd
-adjustableTick = 0.1 #starting value
-lightDuration = 0.02 #should be 0.05
+startColor = "blue"
+startPattern = 19 #tbd
+adjustableTick = 0.01 #starting value
+lightDuration = 0.05 #should be 0.05
 flameDuration = 0.05 #should be 0.05
-lightFadeTime = 2 #should be 0.2
+lightFadeTime = 0 #should be 0.2
 lightGap = 3
 lightEq = 0
 
@@ -161,7 +161,7 @@ while True:
 						fingerLights.append(int(command[1].rstrip()))
 					except:
 						log_event('Bad light input: ' + str(line))
-				elif command[0] == 'fire':
+				elif command[0] == 'fire' or command[0] == 'f':
 					try: 
 						fingerFlames.append(int(command[1].rstrip()))
 					except:
@@ -206,6 +206,14 @@ while True:
 						fingerFlames = []
 					except:
 						log_event('Bad clear input: ' + str(line))
+				elif command[0] == 'panic':
+					try:
+						RunwayControl.clearImmediate()
+						RunwayControl.changeAllowFlame(False)
+						fingerLights = []
+						fingerFlames = []
+					except:
+						log_event('Bad panic input: ' + str(line))
 
 	if time.time() > nextFixedTick:
 		nextFixedTick = time.time() + fixedTick
@@ -260,11 +268,13 @@ while True:
 				RunwayControl.fillUpLightsSimple()
 			elif pattern == 17:
 				RunwayControl.fillUpLightsDual()
-			elif pattern == 18: 
+			elif pattern == 18:
 				if camTestRig == True:
 					lightEq = random.randint(0,18)
 				RunwayControl.fillUpLightsDualEq(lightEq)
-				
+			elif pattern == 19:
+				RunwayControl.lightAndFireChaserSimple()
+								
 			else:
 				log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 1 #set to something sane

@@ -43,8 +43,7 @@ rcIndex2 = 0
 rcIndex3 = 0
 rcIndex4 = 0
 rcNextEvent1 = 0
-rcColorModeRainbow = False
-rcColorModeEq = False
+rcColorMapEnabled = False
 rcAllowFire = False
 
 #colors
@@ -176,17 +175,17 @@ def sharedCreate(ledStrip):
 			flameNodesAll.append(i)
 			
 	log_event("Map contains {0} light nodes...".format(len(lightNodesAll)))
-	print '\nLIGHT NODES:'
+	print '\nlightNodesAll:'
 	print lightNodesAll
 	log_event("Map contains {0} flame nodes...".format(len(flameNodesAll)))
-	print '\nFLAME NODES:'
+	print '\nflameNodesAll:'
 	print flameNodesAll
 	
 	#logical lights
 	for i in range(0, len(lightNodesAll), 3):
 		lightsAll.append([lightNodesAll[i],lightNodesAll[i+1],lightNodesAll[i+2]])
 	
-	print '\nLIGHTS:'
+	print '\nlightsAll:'
 	for i in range(0, len(lightsAll)):
 		print 'Light {0}: '.format(i + 1) + str(lightsAll[i])
 		#print lightsAll[i]
@@ -206,10 +205,10 @@ def sharedCreate(ledStrip):
 	lightNodesRight.reverse()
 		
 	log_event("Left side has {0} light nodes...".format(len(lightNodesLeft)))
-	print 'LIGHT NODES (LEFT SIDE):'
+	print 'lightNodesLeft:'
 	print lightNodesLeft
 	log_event("Right side has {0} light nodes...".format(len(lightNodesRight)))
-	print 'LIGHTS NODES (RIGHT SIDE):'
+	print 'lightNodesRight:'
 	print lightNodesRight
 	
 	#left and right side flames	
@@ -225,17 +224,37 @@ def sharedCreate(ledStrip):
 	flameNodesRight.reverse()
 		
 	log_event("Left side has {0} flame nodes...".format(len(flameNodesLeft)))
-	print 'FLAME NODES (LEFT SIDE):'
+	print 'flameNodesLeft:'
 	print flameNodesLeft
 	log_event("Right side has {0} flame nodes...".format(len(flameNodesRight)))
-	print 'FLAME NODES (RIGHT SIDE):'
-	print flameNodesRight	
+	print 'flameNodesRight:'
+	print flameNodesRight
+	
+	constructLightsAndFireArrays()
 
 	#init nodeStates
 	for i in range(0, len(nodeMap)):
 		nodeStates.append(0)
 		
 	setColorMap("eq")
+
+def constructLightsAndFireArrays():
+	global lightsAndFire
+	lightIndex = 0
+	fireIndex = 0
+	
+	for c in nodeMap:
+		if c == '1':
+			lightsAndFire.append(['L', lightIndex])
+			lightIndex += 1
+		elif c == 'F':
+			lightsAndFire.append(['F', fireIndex])
+			fireIndex += 1
+		else:
+			pass
+
+	print 'lightsAndFire:'
+	print lightsAndFire
 
 def setColorMap(s):
 	print 'RunwayControl - setting color map to: ' + s
@@ -273,7 +292,7 @@ def setColorMap(s):
 	global lightColorsAll
 	lightColorsAll = lightColorsLeft + lightColorsRight
 
-	print 'LIGHT COLORS:'
+	print 'lightColorsAll:'
 	for i in range(0, len(lightColorsAll)):
 		print '{0} - [{1},{2},{3}]'.format(i, lightColorsAll[i][0], lightColorsAll[i][1], lightColorsAll[i][2])
 
@@ -489,7 +508,22 @@ def fillUpLightsDualEq(e):
 				activateLight(leftI)
 				activateLight(rightI)
 			else:
-				pass	
+				pass
+
+def lightAndFireChaserSimple():
+	global rcIndex1
+	if checkTick():
+		if rcIndex1 > len(lightsAndFire):
+			rcIndex1 = 0
+		for i in range(0,len(lightsAndFire)):
+			if i == rcIndex1:
+				if lightsAndFire[i][0] == 'F':
+					requestedFlameNumber = lightsAndFire[i][1] + 1
+					requestedFlameNode = getNodeFromFlameNumber(requestedFlameNumber)
+					nodeStates[flameNodesAll[requestedFlameNode]] = rcFlameDuration
+				elif lightsAndFire[i][0] == 'L':
+					activateLight(lightsAndFire[i][1])
+		rcIndex1 += 1
 
 def clear():
 	for i in range(0,len(nodeMap)):
@@ -525,22 +559,22 @@ def activateLight(i):
 		try:
 			nodeStates[lightsAll[i][0]] = rcLightDuration + rcLightFadeTime
 		except:
-			print "index error 0"
+			print "activateLight - ERROR: Light {0}, node 0 doesn't exist".format(i)
 		try:
 			nodeStates[lightsAll[i][1]] = rcLightDuration + rcLightFadeTime
 		except:
-			print "index error 1"
+			print "activateLight - ERROR: Light {0}, node 1 doesn't exist".format(i)
 		try:
 			nodeStates[lightsAll[i][2]] = rcLightDuration + rcLightFadeTime
 		except:
-			print "index error 2"
+			print "activateLight - ERROR: Light {0}, node 2 doesn't exist".format(i)
 
 def update(ledStrip):
-	global lightFadeTime, pixelOn, pixelFlame, lightColorsAll, rcColorModeEq
+	global lightFadeTime, pixelOn, pixelFlame, lightColorsAll, rcColorMapEnabled
 
 	for i in range(0,len(nodeMap)):
 		#color mapping
-		if rcColorModeEq == True:
+		if rcColorMapEnabled == True:
 			j = float(i)/len(nodeMap)
 			k = int(j * 35)
 			pixelOn = lightColorsAll[k]
@@ -593,19 +627,21 @@ def changeFlameDuration(n):
 	print "RunwayControl - flame duration is now {0}".format(rcFlameDuration)
 	
 def changeAllowFlame(b):
-	global rcAllowFire, pixelFlame, pixelWhite, pixelOff
+	global rcAllowFire, pixelFlame, pixelWhite, pixelRed, pixelOff
 	rcAllowFire = b
 	if rcAllowFire == True:
 		pixelFlame = pixelWhite
 	else:
-		pixelFlame = pixelOff
+		#debugging!
+		pixelFlame = pixelRed
+		
+		#pixelFlame = pixelOff
 	print "RunwayControl - flame control = " + str(rcAllowFire)
 	
 def changeColor(c):
-	global pixelOn, rcColorModeEq, rcColorModeRainbow
+	global pixelOn, rcColorMapEnabled
 	print "RunwayControl - switching color to " + c
-	rcColorModeRainbow = False
-	rcColorModeEq = False
+	rcColorMapEnabled = False
 	if c == "default" or c == "blue":
 		pixelOn = pixelBlue
 	elif c == "white":
@@ -621,9 +657,11 @@ def changeColor(c):
 	elif c == "random":
 		pixelOn = getRandomColor()
 	elif c == "rainbow":
-		rcColorModeRainbow = True
+		setColorMap("rainbow")
+		rcColorMapEnabled = True
 	elif c == "eq":
-		rcColorModeEq = True
+		setColorMap("eq")
+		rcColorMapEnabled = True
 	else:
 		print "RunwayControl - WARNING: Unknown color " + c
 		pixelOn = pixelBlue

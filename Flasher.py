@@ -7,9 +7,9 @@ noServer = False #should be False
 
 #starting values for realtime vars (app can change these)
 startPattern = 9 #tbd
-adjustableTick = 0.01666666666667 #starting value
-lightDuration = 0.05 #should be 0.05
-flameDuration = 0.05 #should be 0.05
+adjustableTick = 0.2 #starting value
+lightDuration = 0.01666666666667 #should be 0.05
+flameDuration = 0.01666666666667 #should be 0.05
 lightFadeTime = 0.1 #should be 0.2
 
 
@@ -67,10 +67,10 @@ if len(sys.argv) > 1:
 	except:
 		log_event('WARNING! Bad pattern arg {0}'.format(sys.argv[1]))
 
-debugNode = 0 #only used for pattern 0 in runwayMode
+debugN = 0 #used for pattern 0 and 12 in runwayMode
 if len(sys.argv) > 2:
 	try:
-		debugNode = int(sys.argv[2])
+		debugN = int(sys.argv[2])
 	except:
 		log_event('WARNING! Bad arg {0} {1}'.format(sys.argv[1], sys.argv[2]))
 
@@ -181,7 +181,7 @@ while True:
 			if pattern == -1:
 				RunwayControl.clear()				
 			if pattern == 0:
-				RunwayControl.showNode(debugNode)
+				RunwayControl.showNode(debugN)
 			elif pattern == 1:
 				RunwayControl.showLights()
 			elif pattern == 2:
@@ -201,11 +201,17 @@ while True:
 			elif pattern == 9:
 				RunwayControl.chaseLights5() #chase by lights
 			elif pattern == 10:
-				RunwayControl.chaseLights6(2) #chase every nth light
+				RunwayControl.chaseLights6()
 			elif pattern == 11:
 				RunwayControl.twinkleAllLights()
+			elif pattern == 12:
+				RunwayControl.showLogicalLight(debugN)
+			elif pattern == 13:
+				RunwayControl.chaseLights7()				
+			elif pattern == 14:
+				RunwayControl.chaseLights8(5)
 			else:
-				#log_event('WARNING! bad pattern number {0}'.format(pattern))
+				log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 1 #set to something sane
 
 			if len(fingerLights) > 0:

@@ -7,8 +7,6 @@ from random import randint
 nodeMap = []
 nodeStates = []
 nodeCount = 0
-
-#logical
 lightNodesAll = []
 flameNodesAll = []
 lightNodesLeft = []
@@ -17,6 +15,11 @@ lightNodesPerSide = 0
 flameNodesLeft = []
 flameNodesRight = []
 flameNodesPerSide = 0
+
+#logical
+lightsAll = []
+lightsLeft = []
+lightsRight = []
 lightsPerSide = 0
 
 #logging
@@ -162,11 +165,20 @@ def sharedCreate(ledStrip):
 			flameNodesAll.append(i)
 			
 	log_event("Map contains {0} light nodes...".format(len(lightNodesAll)))
-	print 'LIGHTS:'
+	print 'LIGHTS NODES:'
 	print lightNodesAll
 	log_event("Map contains {0} flame nodes...".format(len(flameNodesAll)))
-	print 'FLAMES:'
+	print 'FLAME NODES:'
 	print flameNodesAll
+	
+	#logical lights
+	for i in range(0, len(lightNodesAll), 3):
+		lightsAll.append([lightNodesAll[i],lightNodesAll[i+1],lightNodesAll[i+2]])
+	
+	print 'LIGHTS...'
+	for i in range(0, len(lightsAll)):
+		print 'Light {0}'.format(i + 1)
+		print lightsAll[i]
 	
 	#left and right side lights
 	global lightNodesPerSide, lightsPerSide
@@ -302,59 +314,79 @@ def chaseLights4(n):
 		rcIndex1 += 1
 
 def chaseLights5():
-	#dual chase by lights, not nodes
-	global rcTick, rcNextTick
+	#light simple chaser
 	global rcIndex1
-	if time.time() > rcNextTick:
-		rcNextTick = time.time() + rcTick
-		if rcIndex1 > lightsPerSide + 1:
-			rcIndex1 = 1
-		for i in range(1,lightsPerSide + 1):
+	if checkTick():
+		if rcIndex1 > len(lightsAll):
+			rcIndex1 = 0
+		for i in range(0,len(lightsAll)):
 			if i == rcIndex1:
-				#left side
-				requestedLightNodes = getNodesFromLightNumber(i)
-				for j in range(0, len(requestedLightNodes)):
-					nodeStates[lightNodesAll[requestedLightNodes[j]]] = rcLightDuration + rcLightFadeTime
-				
-				#right side
-				requestedLightNodes = getNodesFromLightNumber((lightsPerSide * 2)-i)
-				for k in range(0, len(requestedLightNodes)):
-					nodeStates[lightNodesAll[requestedLightNodes[k]]] = rcLightDuration + rcLightFadeTime
+				activateLight(i)
+			else:
+				pass
 		rcIndex1 += 1
 
-def chaseLights6(n):
-	#dual chase every nth light
-	global rcTick, rcNextTick
+def chaseLights6():
+	#light circle chaser
 	global rcIndex1
-	if time.time() > rcNextTick:
-		rcNextTick = time.time() + rcTick
-		if rcIndex1 > lightsPerSide + 1:
-			rcIndex1 = 1
-		for i in range(1,(lightsPerSide + 1) - rcIndex1):
+	if checkTick():
+		if rcIndex1 > len(lightsAll)/2:
+			rcIndex1 = 0
+		for i in range(0,len(lightsAll)/2):
+			if i == rcIndex1:
+				activateLight(i)
+				activateLight(i + len(lightsAll)/2)
+			else:
+				pass
+		rcIndex1 += 1
+
+def chaseLights7():
+	#light dual chaser
+	global rcIndex1
+	if checkTick():
+		if rcIndex1 > len(lightsAll)/2:
+			rcIndex1 = 0
+		for i in range(0,len(lightsAll)/2):
+			if i == rcIndex1:
+				leftI = i
+				rightI = (len(lightsAll) - 1) - i
+				activateLight(leftI)
+				activateLight(rightI)
+			else:
+				pass
+		rcIndex1 += 1
+
+def chaseLights8(n):
+	#light dual chaser, every n lights
+	global rcIndex1
+	if checkTick():
+		if rcIndex1 > n - 1:
+			rcIndex1 = 0
+		for i in range(0,(len(lightsAll)/2) - rcIndex1):
 			if i % n == 0:
-				print i
-				#left side
-				requestedLightNodes = getNodesFromLightNumber(i + rcIndex1)
-				for j in range(0, len(requestedLightNodes)):
-					nodeStates[lightNodesAll[requestedLightNodes[j]]] = rcLightDuration + rcLightFadeTime
-				'''
-				#right side
-				requestedLightNodes = getNodesFromLightNumber(((lightsPerSide * 2) - i) + rcIndex1)
-				for k in range(0, len(requestedLightNodes)):
-					nodeStates[lightNodesAll[requestedLightNodes[k]]] = rcLightDuration + rcLightFadeTime
-				'''
+				leftI = i + rcIndex1
+				rightI = ((len(lightsAll) - 1) - i) - rcIndex1
+				activateLight(leftI)
+				activateLight(rightI)
+			else:
+				pass
 		rcIndex1 += 1
 
 def twinkleAllLights():
-	global rcTick, rcNextTick
-	if time.time() > rcNextTick:
-		for i in range(0,len(lightNodesAll)/3):
+	if checkTick():
+		for i in range(0,len(lightsAll)):
 			if coinToss() == True:
-				requestedLightNodes = getNodesFromLightNumber(i)
-				for i in range(0, len(requestedLightNodes)):
-					nodeStates[lightNodesAll[requestedLightNodes[i]]] = rcLightDuration + rcLightFadeTime
+				activateLight(i)
 			else:
-				pass	
+				pass
+
+def showLogicalLight(n):
+	if checkTick():
+		for i in range(0,len(lightsAll)):
+			if i == n:
+				activateLight(i)
+			else:
+				pass
 
 def clear():
 	for i in range(0,len(nodeMap)):
@@ -380,6 +412,28 @@ def updateFingerFlames(f):
 		requestedFlameNumber = f[i]
 		requestedFlameNode = getNodeFromFlameNumber(requestedFlameNumber)
 		nodeStates[flameNodesAll[requestedFlameNode]] = rcFlameDuration
+
+def checkTick():
+	global rcTick, rcNextTick
+	if time.time() > rcNextTick:
+		rcNextTick = time.time() + rcTick
+		return True
+	else:
+		return False
+		
+def activateLight(i):
+		try:
+			nodeStates[lightsAll[i][0]] = rcLightDuration + rcLightFadeTime
+		except:
+			print "index error 0"
+		try:
+			nodeStates[lightsAll[i][1]] = rcLightDuration + rcLightFadeTime
+		except:
+			print "index error 1"
+		try:
+			nodeStates[lightsAll[i][2]] = rcLightDuration + rcLightFadeTime
+		except:
+			print "index error 2"
 
 def update(ledStrip):
 	global lightFadeTime

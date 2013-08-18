@@ -1,20 +1,22 @@
 #tweaks
 nodes = 292 #should be 292
-useRunwayControl = True #should be True
 camTestRig = False #should be False
+useRunwayControl = True #should be True
 fakeMode = False #should be False
 noServer = False #should be False
-startPattern = 9 #tbd
-fixedTick = 0.01666666666667 #60fps
 
-#realtime vars (for app to control)
+#starting values for realtime vars (app can change these)
+startPattern = 9 #tbd
 adjustableTick = 0.01666666666667 #starting value
-lightDuration = 0.05 #should be 0.1
+lightDuration = 0.05 #should be 0.05
 flameDuration = 0.05 #should be 0.05
+lightFadeTime = 0.1 #should be 0.2
+
+
+#internal stuff (don't change this)
+fixedTick = 0.01666666666667 #60fps
 fingerLights = []
 fingerFlames = []
-
-#internal state vars (don't change)
 debugTickCounter = 0
 clearCounter = 0
 
@@ -103,6 +105,7 @@ if useRunwayControl == True:
 RunwayControl.changeTick(adjustableTick)
 RunwayControl.changeLightDuration(lightDuration)
 RunwayControl.changeFlameDuration(flameDuration)
+RunwayControl.changeLightFadeTime(lightFadeTime)
 
 while True:	
 	if noServer == False:
@@ -128,36 +131,46 @@ while True:
 						RunwayControl.changeTick(adjustableTick)
 					except:
 						log_event('Bad tick input: ' + str(line))
-					else:
-						pass
-						#log_event('Tick update:' + str(adjustableTick))
 				elif command[0] == 'pattern':
 					try:
 						#log_event('Got pattern command')
 						pattern = int(command[1].rstrip())
-					except:
-						log_event('Bad pattern input: ' + str(line))
-					else:
-						#log_event('Pattern update:' + str(pattern))
 						if useRunwayControl == False:
 							Patterns.resetSharedVars()
-				elif command[0] == 'light':
+					except:
+						log_event('Bad pattern input: ' + str(line))
+				elif command[0] == 'light' or command[0] == 'l':
 					try: 
 						fingerLights.append(int(command[1].rstrip()))
 					except:
 						log_event('Bad light input: ' + str(line))
-					else:
-						pass
-						#log_event('Light update:' + str(int(command[1].rstrip())))
-						
 				elif command[0] == 'fire':
 					try: 
 						fingerFlames.append(int(command[1].rstrip()))
 					except:
 						log_event('Bad fire input: ' + str(line))
-					else:
-						pass
-						#log_event('Fire update:' + str(int(command[1].rstrip())))				
+				elif command[0] == 'ld':
+					try: 
+						RunwayControl.changeLightDuration(int(command[1].rstrip()))
+					except:
+						log_event('Bad light duration input: ' + str(line))
+				elif command[0] == 'fd':
+					try:
+						RunwayControl.changeFlameDuration(int(command[1].rstrip()))
+					except:
+						log_event('Bad flame duration input: ' + str(line))
+				elif command[0] == 'fadetime':
+					try:
+						RunwayControl.changeLightFadeTime(int(command[1].rstrip()))
+					except:
+						log_event('Bad light fade time input: ' + str(line))
+				elif command[0] == 'clear':
+					try:
+						RunwayControl.clearImmediate()
+						fingerLights = []
+						fingerFlames = []
+					except:
+						log_event('Bad clear input: ' + str(line))
 
 	if time.time() > nextFixedTick:
 		nextFixedTick = time.time() + fixedTick
@@ -184,9 +197,13 @@ while True:
 			elif pattern == 7:
 				RunwayControl.chaseLights3()
 			elif pattern == 8:
-				RunwayControl.chaseLights4(5) #chase every nth node
+				RunwayControl.chaseLights4(3) #chase every nth node
 			elif pattern == 9:
 				RunwayControl.chaseLights5() #chase by lights
+			elif pattern == 10:
+				RunwayControl.chaseLights6(2) #chase every nth light
+			elif pattern == 11:
+				RunwayControl.twinkleAllLights()
 			else:
 				#log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 1 #set to something sane

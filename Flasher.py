@@ -7,8 +7,8 @@ noServer = False #should be False
 
 #starting values for realtime vars (app can change these)
 startColor = "blue"
-startPattern = 21 #tbd
-adjustableTick = 0.01 #starting value
+startPattern = 20 #tbd
+adjustableTick = 0.25 #starting value
 lightDuration = 0.05 #should be 0.05
 flameDuration = 0.05 #should be 0.05
 lightFadeTime = 0
@@ -226,7 +226,7 @@ while True:
 			RunwayControl.decrementDurations(fixedTick)
 		
 			if pattern == -1:
-				RunwayControl.clear()		
+				RunwayControl.clear()
 			if pattern == 0: #debugging
 				RunwayControl.showNode(debugN)
 			elif pattern == 1:
@@ -234,7 +234,7 @@ while True:
 			elif pattern == 2:
 				RunwayControl.showFlames()
 			elif pattern == 3:
-				RunwayControl.showLeftSideAll()	
+				RunwayControl.showLeftSideAll()
 			elif pattern == 4:
 				RunwayControl.showRightSideAll()
 			elif pattern == 5:
@@ -270,12 +270,14 @@ while True:
 			elif pattern == 19:
 				RunwayControl.lightAndFireChaserSimple()
 			elif pattern == 20:
-				RunwayControl.lightAndFireChaserDual()
+				RunwayControl.lightAndFireChaserLeft()
+				RunwayControl.lightAndFireChaserRight()
 			elif pattern == 21:
-				RunwayControl.lightAndFireChaserDualReverse()
+				RunwayControl.lightAndFireChaserLeftReverse()
+				RunwayControl.lightAndFireChaserRightReverse()
 			elif pattern == 22:
-				RunwayControl.lightAndFireChaserDual()
-				RunwayControl.lightAndFireChaserDualReverse()
+				RunwayControl.lightAndFireChaserLeft()
+				RunwayControl.lightAndFireChaserRightReverse()
 			elif pattern == 23:
 				RunwayControl.twinkleAllFlames()
 			elif pattern == 24:
@@ -283,7 +285,14 @@ while True:
 				RunwayControl.twinkleAllFlames()
 			elif pattern == 25:
 				RunwayControl.twinkleAllLightsRandomFade()
-			
+			elif pattern == 26:
+				RunwayControl.lightAndFireChaserLeft()
+			elif pattern == 27:
+				RunwayControl.lightAndFireChaserRight()	
+			elif pattern == 28:
+				RunwayControl.lightAndFireChaserLeftReverse()
+			elif pattern == 29:
+				RunwayControl.lightAndFireChaserRightReverse()	
 			else:
 				log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 13 #set to something sane

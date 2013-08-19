@@ -39,7 +39,7 @@ rcNextTick2 = 0
 rcLightDuration = 1.0
 rcFlameDuration = 0.05
 rcLightFadeTime = 0.5
-rcBool = False
+rcBool1 = False
 rcIndex1 = 0
 rcIndex2 = 0
 rcIndex3 = 0
@@ -62,7 +62,6 @@ pixelOn = pixelBlue
 
 def log_event(msg):
 	events.append(msg)
-
 
 def create(ledStrip):
 	log_event('creating node array [{0} nodes total]'.format(ledStrip.nLeds))
@@ -123,9 +122,6 @@ def createCamTestRig(ledStrip):
 
 	#last node
 	nodeMap.append('N')
-	
-	for node in nodeMap:
-		print node
 	
 	sharedCreate(ledStrip)
 
@@ -527,41 +523,49 @@ def lightAndFireChaserSimple():
 					activateLight(lightsAndFire[i][1])
 		rcIndex1 += 1
 
-def lightAndFireChaserDual():
+def lightAndFireChaserLeft():
 	global rcIndex1
-	chaseLength = (len(lightsAndFire) / 2)
+	chaseLength = len(lightsAndFireLeft) - 1	
 	if checkTick1():
 		if rcIndex1 > chaseLength:
 			rcIndex1 = 0
 		for i in range(0,chaseLength):
 			if i == rcIndex1:
-				print i
-				if lightsAndFireLeft[i][0] == 'F':
-					activateFlame(lightsAndFireLeft[i][1] + 1)
-				elif lightsAndFireLeft[i][0] == 'L':
+				if lightsAndFireLeft[i][0] == 'L':
 					activateLight(lightsAndFireLeft[i][1])
-					activateLight(lightsAndFireRight[i][1])
+
+				#if next index is fire, light it now and skip next node
+				if lightsAndFireLeft[i + 1][0] == 'F':
+					activateFlame(lightsAndFireLeft[i + 1][1] + 1)
+					rcIndex1 += 1
+
 		rcIndex1 += 1
 
-def lightAndFireChaserDualReverse():
+def lightAndFireChaserRight():
 	global rcIndex2
-	chaseLength = (len(lightsAndFire) / 2) - 1
+	chaseLength = len(lightsAndFireRight) - 1	
 	if checkTick2():
-		if rcIndex2 < 0 :
-			rcIndex2 = chaseLength
-		for i in range(chaseLength, 0, -1):
+		if rcIndex2 > chaseLength:
+			rcIndex2 = 0
+		for i in range(0,chaseLength):
 			if i == rcIndex2:
-				if lightsAndFireLeft[i][0] == 'F':
-					requestedFlameNumber = lightsAndFireLeft[i][1] + 1
-					requestedFlameNode = getNodeFromFlameNumber(requestedFlameNumber)
-					nodeStates[flameNodesAll[requestedFlameNode]] = rcFlameDuration
-					requestedFlameNumber = lightsAndFireRight[i][1] + 1
-					requestedFlameNode = getNodeFromFlameNumber(requestedFlameNumber)
-					nodeStates[flameNodesAll[requestedFlameNode]] = rcFlameDuration
-				elif lightsAndFireLeft[i][0] == 'L':
-					activateLight(lightsAndFireLeft[i][1])
+				if lightsAndFireRight[i][0] == 'L':
 					activateLight(lightsAndFireRight[i][1])
-		rcIndex2 -= 1
+
+				#if this index is fire, light it and next light now
+				#then skip ahead by 1
+				if lightsAndFireRight[i][0] == 'F':
+					activateFlame(lightsAndFireRight[i][1] + 1)
+					activateLight(lightsAndFireRight[i + 1][1])
+					rcIndex2 += 1
+
+		rcIndex2 += 1
+
+def lightAndFireChaserLeftReverse():
+	lightAndFireChaserLeft()
+
+def lightAndFireChaserRightReverse():
+	lightAndFireChaserRight()
 
 def twinkleAllFlames():
 	if checkTick2():

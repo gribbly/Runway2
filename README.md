@@ -77,6 +77,8 @@ Protocol
 
 **eq=n** //current EQ level (send volume from mic). Expects a number between 0 and 42 (number of lights on one side). Use with "fillUpLightsDualEq".
 
+**eql=n,eqr=n** //NOT YET IMPLEMENTED. Use for stereo EQ level.
+
 **clear=1** //send to instantly turn everything off
 
 If we need to handle multiple parameters per message, comma separate them:

@@ -69,42 +69,26 @@ def create(ledStrip):
 
 	#first node
 	nodeMap.append('N')
-	
+
 	#intro
-	nodeMap.append('1')
-	nodeMap.append('2')
-	nodeMap.append('3')
-	nodeMap.append('1')
-	nodeMap.append('2')
-	nodeMap.append('3')
+	nodeMap.extend("123123123")
 	
 	#side 1
-	for i in range(0,20):
-		nodeMap.append('F')
-		nodeMap.append('1')
-		nodeMap.append('2')
-		nodeMap.append('3')
-		nodeMap.append('1')
-		nodeMap.append('2')
-		nodeMap.append('3')
+	for i in range(0,19):
+		nodeMap.extend("F123123")
 	
-	#side 2
-	for i in range(0,20):
-		nodeMap.append('1')
-		nodeMap.append('2')
-		nodeMap.append('3')
-		nodeMap.append('1')
-		nodeMap.append('2')
-		nodeMap.append('3')
-		nodeMap.append('F')
+	#end of side 1
+	nodeMap.extend("F123")
+
+	#start side 2
+	nodeMap.extend("123123F")
+	
+	#rest of side 2
+	for i in range(0,19):
+		nodeMap.extend("123123F")
 
 	#outro
-	nodeMap.append('1')
-	nodeMap.append('2')
-	nodeMap.append('3')
-	nodeMap.append('1')
-	nodeMap.append('2')
-	nodeMap.append('3')
+	nodeMap.extend("123123")
 
 	#last node
 	nodeMap.append('N')
@@ -119,45 +103,29 @@ def createCamTestRig(ledStrip):
 
 	#first node
 	nodeMap.append('N')
-	
+
 	#intro
-	nodeMap.append('1')
-	nodeMap.append('2')
-	nodeMap.append('3')
-	nodeMap.append('1')
-	nodeMap.append('2')
-	nodeMap.append('3')
-	
+	nodeMap.extend("123123123")
+
 	#side 1
 	for i in range(0,8):
-		nodeMap.append('F')
-		nodeMap.append('1')
-		nodeMap.append('2')
-		nodeMap.append('3')
-		nodeMap.append('1')
-		nodeMap.append('2')
-		nodeMap.append('3')
+		nodeMap.extend("F123123")
+		
+	#start side 2
+	nodeMap.extend("123F")
 	
-	#side 2
-	for i in range(0,8):
-		nodeMap.append('1')
-		nodeMap.append('2')
-		nodeMap.append('3')
-		nodeMap.append('1')
-		nodeMap.append('2')
-		nodeMap.append('3')
-		nodeMap.append('F')
+	#rest of side 2
+	for i in range(0,7):
+		nodeMap.extend("123123F")
 
 	#outro
-	nodeMap.append('1')
-	nodeMap.append('2')
-	nodeMap.append('3')
-	nodeMap.append('1')
-	nodeMap.append('2')
-	nodeMap.append('3')
+	nodeMap.extend("123123")
 
 	#last node
 	nodeMap.append('N')
+	
+	for node in nodeMap:
+		print node
 	
 	sharedCreate(ledStrip)
 
@@ -169,7 +137,7 @@ def sharedCreate(ledStrip):
 	
 	#light addresses
 	for	i in range(0,len(nodeMap)):
-		if nodeMap[i] == '1' or nodeMap[i] == '2' or nodeMap[i] == '3':
+		if nodeMap[i] in ['1', '2', '3']:
 			lightNodesAll.append(i)
 	
 	#flame addresses
@@ -279,6 +247,7 @@ def constructLightsAndFireArrays():
 def setColorMap(s):
 	print 'RunwayControl - setting color map to: ' + s
 
+	global lightColorsAll, lightColorsLeft, lightColorsRight
 	lightColorsAll = []
 	lightColorsLeft = []
 	lightColorsRight = []
@@ -376,24 +345,24 @@ def chaseNodeSimple():
 def chaseNodeDual():
 	global rcIndex1, lightNodesLeft, lightNodesRight, lightNodesPerSide
 	if checkTick1():
+		if rcIndex1 > lightNodesPerSide:
+			rcIndex1 = 0
 		for i in range(0,lightNodesPerSide):
 			if i == rcIndex1:
 				nodeStates[lightNodesLeft[i]] = rcLightDuration + rcLightFadeTime
 				nodeStates[lightNodesRight[i]] = rcLightDuration + rcLightFadeTime
 		rcIndex1 += 1
-		if rcIndex1 > lightNodesPerSide:
-			rcIndex1 = 0
 
 def chaseNodeDualReverse():
 	global rcIndex1, lightNodesLeft, lightNodesRight, lightNodesPerSide
 	if checkTick1():
-		for i in range(lightNodesPerSide-1, 0, -1):
+		if rcIndex1 < 0:
+			rcIndex1 = lightNodesPerSide
+		for i in range(0, lightNodesPerSide):
 			if i == rcIndex1:
 				nodeStates[lightNodesLeft[i]] = rcLightDuration + rcLightFadeTime
 				nodeStates[lightNodesRight[i]] = rcLightDuration + rcLightFadeTime
 		rcIndex1 -= 1
-		if rcIndex1 < 0:
-			rcIndex1 = lightNodesPerSide-1
 		
 def chaseMultiNodeDual(n):
 	global rcIndex1, lightNodesLeft, lightNodesRight, lightNodesPerSide
@@ -566,13 +535,9 @@ def lightAndFireChaserDual():
 			rcIndex1 = 0
 		for i in range(0,chaseLength):
 			if i == rcIndex1:
+				print i
 				if lightsAndFireLeft[i][0] == 'F':
-					requestedFlameNumber = lightsAndFireLeft[i][1] + 1
-					requestedFlameNode = getNodeFromFlameNumber(requestedFlameNumber)
-					nodeStates[flameNodesAll[requestedFlameNode]] = rcFlameDuration
-					requestedFlameNumber = lightsAndFireRight[i][1] + 1
-					requestedFlameNode = getNodeFromFlameNumber(requestedFlameNumber)
-					nodeStates[flameNodesAll[requestedFlameNode]] = rcFlameDuration
+					activateFlame(lightsAndFireLeft[i][1] + 1)
 				elif lightsAndFireLeft[i][0] == 'L':
 					activateLight(lightsAndFireLeft[i][1])
 					activateLight(lightsAndFireRight[i][1])

@@ -1,5 +1,5 @@
 #tweaks
-nodes = 292 #should be 292
+nodes = 294 #should be 294
 camTestRig = False #should be False
 useRunwayControl = True #should be True
 fakeMode = False #should be False
@@ -12,7 +12,7 @@ adjustableTick = 0.01 #starting value
 lightDuration = 0.05 #should be 0.05
 flameDuration = 0.05 #should be 0.05
 lightFadeTime = 0
-lightGap = 3
+lightGap = 5
 lightEq = 0
 
 #internal stuff (don't change this)
@@ -226,7 +226,7 @@ while True:
 			RunwayControl.decrementDurations(fixedTick)
 		
 			if pattern == -1:
-				RunwayControl.clear()				
+				RunwayControl.clear()		
 			if pattern == 0: #debugging
 				RunwayControl.showNode(debugN)
 			elif pattern == 1:
@@ -234,11 +234,11 @@ while True:
 			elif pattern == 2:
 				RunwayControl.showFlames()
 			elif pattern == 3:
-				RunwayControl.showLeftSideAll()		
+				RunwayControl.showLeftSideAll()	
 			elif pattern == 4:
 				RunwayControl.showRightSideAll()
 			elif pattern == 5:
-				RunwayControl.chaseNodeSimple()	
+				RunwayControl.chaseNodeSimple()
 			elif pattern == 6:
 				RunwayControl.chaseNodeDual()
 			elif pattern == 7:
@@ -254,7 +254,7 @@ while True:
 			elif pattern == 12: #debugging
 				RunwayControl.showLogicalLight(debugN)
 			elif pattern == 13:
-				RunwayControl.chaseLightDual()				
+				RunwayControl.chaseLightDual()			
 			elif pattern == 14:
 				RunwayControl.chaseMultiLightDual(lightGap)
 			elif pattern == 15:

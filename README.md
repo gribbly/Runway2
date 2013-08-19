@@ -63,11 +63,13 @@ Protocol
 
 **fire=n** //specific flame
 
-**ld=n** //light duration. Clamped to 0.0005 - 10.0
+**ld=n** //light duration. Clamped to 0.0005 - 10.0. NOTE: Fades add to effective duration. For exact duration, set fading to 0
 
 **fd=n** //fire duration. Clamped to 0.005 - 3.0
 
-**fadetime=n** //light fade duration. Set to 0 for no fade.
+**fadetime=n** //light fade out duration. Set to 0 for no fade.
+
+**fadein=n** //light fade in duration. Set to 0 for no fade.
 
 **lightgap=n** //(int) gap between lights (used in some patterns). Clamped to min = 1.
 

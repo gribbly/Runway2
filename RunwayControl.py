@@ -485,9 +485,9 @@ def sillyRabbits1():
 	global rcIndex1, rcIndex2, rcIndex3, rcIndex4, rcNextEvent1
 	if checkTick1():
 		if time.time() > rcNextEvent1:
-			rcIndex3 = random.randint(0, len(lightsAll))
+			rcIndex3 = random.randint(0, len(lightsAll) - 1)
 			rcIndex4 = rcIndex3 + random.randint(-3, 3)
-			rcIndex4 = max(min(rcIndex4, len(lightsAll)), 0)
+			rcIndex4 = max(min(rcIndex4, len(lightsAll)) - 1, 0)
 			#print 'rcIndex3 = {0}, rcIndex4 = {1}'.format(rcIndex3, rcIndex4)
 			rcNextEvent1 = time.time() + random.uniform(2.5,6.0)
 		if rcIndex1 < rcIndex3:

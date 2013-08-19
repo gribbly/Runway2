@@ -1,6 +1,6 @@
 #tweaks
-nodes = 292 #should be 292
-camTestRig = False #should be False
+nodes = 124 #should be 292
+camTestRig = True #should be False
 useRunwayControl = True #should be True
 fakeMode = False #should be False
 noServer = False #should be False
@@ -176,7 +176,7 @@ while True:
 						log_event('Bad flame duration input: ' + str(line))
 				elif command[0] == 'fadetime':
 					try:
-						RunwayControl.changeLightFadeTime(int(command[1].rstrip()))
+						RunwayControl.changeLightFadeTime(float(command[1].rstrip()))
 					except:
 						log_event('Bad light fade time input: ' + str(line))
 				elif command[0] == 'lightgap':
@@ -204,6 +204,7 @@ while True:
 					pattern = 0
 					RunwayControl.clearImmediate(ledStrip)
 					RunwayControl.changeAllowFlame(False)
+					appConnected = False
 					fingerLights = []
 					fingerFlames = []
 				else:

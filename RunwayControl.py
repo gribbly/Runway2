@@ -749,11 +749,13 @@ def update2(ledStrip):
 	ledStrip.update()	
 
 def changeTick(n):
-	global rcTick1
-	rcTick1 = max(min(n, 20.0), 0.01666666666667)
-	print "RunwayControl - tick is now {0}".format(rcTick1)
+	global rcTick1, rcTick2
+	rcTick1 = max(min(n, 20.0), 0.01)
+	rcTick2 = max(min(n, 20.0), 0.01)
 	rcNextTick1 = 0 #apply next update
-
+	rcNextTick2 = 0 #apply next update
+	print "RunwayControl - tick is now {0}".format(rcTick1)
+	
 def changeLightFadeTime(n):
 	global rcLightFadeTime
 	rcLightFadeTime = max(min(n, 10.0), 0)

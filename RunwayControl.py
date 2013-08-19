@@ -36,9 +36,10 @@ rcTick1 = 0.01666666666667
 rcNextTick1 = 0
 rcTick2 = 0.01666666666667
 rcNextTick2 = 0
-rcLightDuration = 1.0
+rcLightDuration = 0.05
 rcFlameDuration = 0.05
-rcLightFadeTime = 0.5
+rcLightFadeInTime = 0
+rcLightFadeOutTime = 0.5
 rcBool1 = False
 rcIndex1 = 0
 rcIndex2 = 0
@@ -298,12 +299,12 @@ def setColorMap(s):
 
 def showNode(n):
 	if checkTick1():
-		nodeStates[n] = rcLightDuration + rcLightFadeTime
+		nodeStates[n] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 
 def showLights():
 	if checkTick1():
 		for i in range(0,len(lightNodesAll)):
-			nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeTime
+			nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 
 def showFlames():
 	if checkTick1():
@@ -315,7 +316,7 @@ def showLeftSideAll():
 	global flameNodesLeft, flameNodesRight, flameNodesPerSide
 	if checkTick1():
 		for i in range(0,lightNodesPerSide):
-			nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeTime	
+			nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime	
 		for i in range(0,flameNodesPerSide):
 			nodeStates[flameNodesAll[i]] = rcFlameDuration
 
@@ -324,7 +325,7 @@ def showRightSideAll():
 	global flameNodesLeft, flameNodesRight, flameNodesPerSide
 	if checkTick1():
 		for i in range(lightNodesPerSide, len(lightNodesAll)):
-			nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeTime	
+			nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime	
 		for i in range(flameNodesPerSide , len(flameNodesAll)):
 			nodeStates[flameNodesAll[i]] = rcFlameDuration
 
@@ -333,7 +334,7 @@ def chaseNodeSimple():
 	if checkTick1():
 		for i in range(0,len(lightNodesAll)):
 			if i == rcIndex1:
-				nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeTime
+				nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 		rcIndex1 += 1
 		if rcIndex1 > len(lightNodesAll):
 			rcIndex1 = 0
@@ -345,8 +346,8 @@ def chaseNodeDual():
 			rcIndex1 = 0
 		for i in range(0,lightNodesPerSide):
 			if i == rcIndex1:
-				nodeStates[lightNodesLeft[i]] = rcLightDuration + rcLightFadeTime
-				nodeStates[lightNodesRight[i]] = rcLightDuration + rcLightFadeTime
+				nodeStates[lightNodesLeft[i]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
+				nodeStates[lightNodesRight[i]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 		rcIndex1 += 1
 
 def chaseNodeDualReverse():
@@ -356,8 +357,8 @@ def chaseNodeDualReverse():
 			rcIndex1 = lightNodesPerSide
 		for i in range(0, lightNodesPerSide):
 			if i == rcIndex1:
-				nodeStates[lightNodesLeft[i]] = rcLightDuration + rcLightFadeTime
-				nodeStates[lightNodesRight[i]] = rcLightDuration + rcLightFadeTime
+				nodeStates[lightNodesLeft[i]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
+				nodeStates[lightNodesRight[i]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 		rcIndex1 -= 1
 		
 def chaseMultiNodeDual(n):
@@ -367,8 +368,8 @@ def chaseMultiNodeDual(n):
 			rcIndex1 = 0
 		for i in range(0, lightNodesPerSide - rcIndex1):
 			if i % n == 0:
-				nodeStates[lightNodesLeft[i + rcIndex1]] = rcLightDuration + rcLightFadeTime
-				nodeStates[lightNodesRight[i + rcIndex1]] = rcLightDuration + rcLightFadeTime
+				nodeStates[lightNodesLeft[i + rcIndex1]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
+				nodeStates[lightNodesRight[i + rcIndex1]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 		rcIndex1 += 1
 
 def chaseLightSimple():
@@ -604,11 +605,11 @@ def twinkleAllFlames():
 				pass
 
 def twinkleAllLightsRandomFade():
-	global rcLightFadeTime
+	global rcLightFadeOutTime
 	if checkTick1():
 		for i in range(0,len(lightsAll)):
 			if coinToss(3) == True:
-				rcLightFadeTime = random.uniform(0.2, 2.0)
+				rcLightFadeOutTime = random.uniform(0.2, 2.0)
 				activateLight(i)
 			else:
 				pass
@@ -635,7 +636,7 @@ def twinkleAllLightNodes():
 	if checkTick1():
 		for i in range(0,len(lightNodesAll)):
 			if coinToss(5) == True:
-				nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeTime
+				nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 			else:
 				pass
 
@@ -679,15 +680,15 @@ def checkTick2():
 def activateLight(i):
 	#print 'RunwayControl - activateLight {0}'.format(i)
 	try:
-		nodeStates[lightsAll[i][0]] = rcLightDuration + rcLightFadeTime
+		nodeStates[lightsAll[i][0]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 	except:
 		print "activateLight - ERROR: Light {0}, node 0 doesn't exist".format(i)
 	try:
-		nodeStates[lightsAll[i][1]] = rcLightDuration + rcLightFadeTime
+		nodeStates[lightsAll[i][1]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 	except:
 		print "activateLight - ERROR: Light {0}, node 1 doesn't exist".format(i)
 	try:
-		nodeStates[lightsAll[i][2]] = rcLightDuration + rcLightFadeTime
+		nodeStates[lightsAll[i][2]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 	except:
 		print "activateLight - ERROR: Light {0}, node 2 doesn't exist".format(i)
 
@@ -698,7 +699,9 @@ def activateFlame(i):
 	nodeStates[flameNodesAll[requestedFlameNode]] = rcFlameDuration
 
 def update(ledStrip):
-	global lightFadeTime, pixelOn, pixelFlame, lightColorsAll, rcColorMapEnabled
+	global rcLightFadeOutTime, rcLightFadeInTime, pixelOn, pixelFlame, lightColorsAll, rcColorMapEnabled
+
+	effectiveLightDuration = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 
 	for i in xrange(0,len(nodeMap)):
 		#color mapping
@@ -707,20 +710,36 @@ def update(ledStrip):
 			k = int(j * 35)
 			pixelOn = lightColorsAll[k]
 
-		if nodeStates[i] > rcLightFadeTime:
+		if nodeStates[i] > effectiveLightDuration - rcLightFadeInTime and rcLightFadeInTime > 0:
+			if nodeMap[i] == 'F':
+				ledStrip.setPixel(i, pixelFlame)
+			else:
+				fadeAmount = 0
+				nodeTime = effectiveLightDuration - nodeStates[i]
+				if nodeTime > 0:
+					fadeAmount = nodeTime/rcLightFadeInTime
+				r, g, b = pixelOn
+				p = int(fadeAmount * 255)
+				if r > 0:
+					r = p
+				if g > 0:
+					g = p
+				if b > 0:
+					b = p
+				ledStrip.setPixel(i, [r,g,b])
+		elif nodeStates[i] > rcLightFadeOutTime:
 			if nodeMap[i] == 'F':
 				ledStrip.setPixel(i, pixelFlame)
 			else:
 				ledStrip.setPixel(i, pixelOn)
-
-		elif nodeStates[i] > 0 and nodeStates[i] <= rcLightFadeTime:
+		elif nodeStates[i] > 0 and nodeStates[i] <= rcLightFadeOutTime:
 			if nodeMap[i] == 'F':
 				ledStrip.setPixel(i, pixelFlame)
 			else:
 				r = pixelOn[0]
 				g = pixelOn[1]
 				b = pixelOn[2]
-				p = int(nodeStates[i]/rcLightFadeTime * 255)
+				p = int(nodeStates[i]/rcLightFadeOutTime * 255)
 				if r > 0:
 					r = p
 				if g > 0:
@@ -730,29 +749,28 @@ def update(ledStrip):
 				ledStrip.setPixel(i, [r,g,b])
 		else:
 			ledStrip.setPixel(i, pixelOff)
+
 	ledStrip.update()
-	time.sleep(0)
+	#time.sleep(0)
 	
 def update2(ledStrip):
 	#ignores color maps (for now)
 	#experiment with "render and perturb"
-	
-	global pixelBuffer, lightFadeTime, pixelOn, pixelFlame
+
+	global pixelBuffer, rcLightFadeOutTime, pixelOn, pixelFlame
 	for i in xrange(0,len(nodeMap)):
-		if nodeStates[i] > rcLightFadeTime:
+		if nodeStates[i] > rcLightFadeOutTime:
 			if nodeMap[i] == 'F':
 				pixelBuffer[i] = pixelFlame
 			else:
 				pixelBuffer[i] = pixelOn
 
-		elif nodeStates[i] > 0 and nodeStates[i] <= rcLightFadeTime:
+		elif nodeStates[i] > 0 and nodeStates[i] <= rcLightFadeOutTime:
 			if nodeMap[i] == 'F':
 				pixelBuffer[i] = pixelFlame
 			else:
-				r = pixelOn[0]
-				g = pixelOn[1]
-				b = pixelOn[2]
-				p = int(nodeStates[i]/rcLightFadeTime * 255)
+				r,g,b = pixelOn
+				p = int(nodeStates[i]/rcLightFadeOutTime * 255)
 				if r > 0:
 					r = p
 				if g > 0:
@@ -762,13 +780,19 @@ def update2(ledStrip):
 				pixelBuffer[i] = [r,g,b]
 		else:
 			pixelBuffer[i] = pixelOff
-			
+
+	t = time.clock()
 	for i in xrange(0, len(pixelBuffer)):
 		if nodeMap[i] in ['1', '2', '3']:
-			#todo: perturb colors here
-			pass
+			r,g,b = pixelBuffer[i]
+			p = math.sin(t + i)
+			p = abs(p)
+			r *= p
+			g *= p
+			b *= p
+			pixelBuffer[i] = [r,g,b] #todo: this doesn't work
 		ledStrip.setPixel(i, pixelBuffer[i])
-	
+
 	ledStrip.update()
 
 def syncIndices():
@@ -788,9 +812,9 @@ def changeTick(n):
 	print "RunwayControl - tick is now {0}".format(rcTick1)
 	
 def changeLightFadeTime(n):
-	global rcLightFadeTime
-	rcLightFadeTime = max(min(n, 10.0), 0)
-	print "RunwayControl - light fade time is now {0}".format(rcLightFadeTime)
+	global rcLightFadeOutTime
+	rcLightFadeOutTime = max(min(n, 10.0), 0)
+	print "RunwayControl - light fade time is now {0}".format(rcLightFadeOutTime)
 
 def changeLightDuration(n):
 	global rcLightDuration

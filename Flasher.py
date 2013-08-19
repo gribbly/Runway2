@@ -1,17 +1,17 @@
 #tweaks
-nodes = 124 #should be 294
-camTestRig = True #should be False
+nodes = 294 #should be 294
+camTestRig = False #should be False
 useRunwayControl = True #should be True
 fakeMode = False #should be False
 noServer = False #should be False
 
 #starting values for realtime vars (app can change these)
 startColor = "blue"
-startPattern = 20 #tbd
+startPattern = 15 #tbd
 adjustableTick = 0.25 #starting value
 lightDuration = 0.05 #should be 0.05
 flameDuration = 0.05 #should be 0.05
-lightFadeTime = 0
+lightFadeTime = 0.2
 lightGap = 5
 lightEq = 0
 

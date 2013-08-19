@@ -538,7 +538,6 @@ def lightAndFireChaserLeft():
 				if lightsAndFireLeft[i + 1][0] == 'F':
 					activateFlame(lightsAndFireLeft[i + 1][1] + 1)
 					rcIndex1 += 1
-
 		rcIndex1 += 1
 
 def lightAndFireChaserRight():
@@ -558,14 +557,43 @@ def lightAndFireChaserRight():
 					activateFlame(lightsAndFireRight[i][1] + 1)
 					activateLight(lightsAndFireRight[i + 1][1])
 					rcIndex2 += 1
-
 		rcIndex2 += 1
 
 def lightAndFireChaserLeftReverse():
-	lightAndFireChaserLeft()
+	global rcIndex1
+	chaseLength = len(lightsAndFireLeft) - 1	
+	if checkTick1():
+		if rcIndex1 < 0:
+			rcIndex1 = chaseLength
+		for i in range(0,chaseLength):
+			if i == rcIndex1:
+				if lightsAndFireLeft[i][0] == 'L':
+					activateLight(lightsAndFireLeft[i][1])
+
+				#if this index is fire, light it and next light now
+				#then skip ahead by 1
+				if lightsAndFireLeft[i][0] == 'F':
+					activateFlame(lightsAndFireLeft[i][1] + 1)
+					activateLight(lightsAndFireLeft[i - 1][1])
+					rcIndex1 -= 1
+		rcIndex1 -= 1
 
 def lightAndFireChaserRightReverse():
-	lightAndFireChaserRight()
+	global rcIndex2
+	chaseLength = len(lightsAndFireRight) - 1	
+	if checkTick2():
+		if rcIndex2 < 0:
+			rcIndex2 = chaseLength
+		for i in range(0,chaseLength):
+			if i == rcIndex2:
+				if lightsAndFireRight[i][0] == 'L':
+					activateLight(lightsAndFireRight[i][1])
+
+				#if next index is fire, light it now and skip next node
+				if lightsAndFireRight[i - 1][0] == 'F':
+					activateFlame(lightsAndFireRight[i - 1][1] + 1)
+					rcIndex2 -= 1
+		rcIndex2 -= 1
 
 def twinkleAllFlames():
 	if checkTick2():
@@ -582,6 +610,32 @@ def twinkleAllLightsRandomFade():
 			if coinToss(3) == True:
 				rcLightFadeTime = random.uniform(0.2, 2.0)
 				activateLight(i)
+			else:
+				pass
+
+def twinkleOneFlame():
+	if checkTick2():
+		luckyWinner = random.randint(0,len(flameNodesAll))
+		for i in range(0,len(flameNodesAll)):
+			if i == luckyWinner:
+				activateFlame(i)
+			else:
+				pass
+
+def twinkleOneLight():
+	if checkTick1():
+		luckyWinner = random.randint(0,len(lightsAll))
+		for i in range(0,len(lightsAll)):
+			if i == luckyWinner:
+				activateLight(i)
+			else:
+				pass
+
+def twinkleAllLightNodes():
+	if checkTick1():
+		for i in range(0,len(lightNodesAll)):
+			if coinToss(5) == True:
+				nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeTime
 			else:
 				pass
 
@@ -715,7 +769,15 @@ def update2(ledStrip):
 			pass
 		ledStrip.setPixel(i, pixelBuffer[i])
 	
-	ledStrip.update()	
+	ledStrip.update()
+
+def syncIndices():
+	print 'RunwayControl - syncIndices'
+	global rcIndex1, rcIndex2, rcIndex3, rcIndex4
+	rcIndex1 = 0
+	rcIndex2 = 0
+	rcIndex3 = 0
+	rcIndex4 = 0
 
 def changeTick(n):
 	global rcTick1, rcTick2
@@ -806,6 +868,6 @@ def getNodeFromFlameNumber(n):
 
 def coinToss(n):
 	if random.randint(0,n) == 0:
-		return False
-	else:
 		return True
+	else:
+		return False

@@ -1,6 +1,6 @@
 #tweaks
-nodes = 294 #should be 294
-camTestRig = False #should be False
+nodes = 124 #should be 294
+camTestRig = True #should be False
 useRunwayControl = True #should be True
 fakeMode = False #should be False
 noServer = False #should be False
@@ -149,6 +149,8 @@ while True:
 					try:
 						#log_event('Got pattern command')
 						pattern = int(command[1].rstrip())
+						if pattern in [20,21,22,35]:
+							RunwayControl.syncIndices()
 						if useRunwayControl == False:
 							Patterns.resetSharedVars()
 					except:
@@ -293,6 +295,21 @@ while True:
 				RunwayControl.lightAndFireChaserLeftReverse()
 			elif pattern == 29:
 				RunwayControl.lightAndFireChaserRightReverse()	
+			elif pattern == 30:
+				RunwayControl.twinkleOneFlame()
+			elif pattern == 31:
+				RunwayControl.twinkleOneLight()
+			elif pattern == 32:
+				RunwayControl.twinkleOneLight()
+				RunwayControl.twinkleOneFlame()
+			elif pattern == 33:
+				RunwayControl.twinkleAllLightNodes()
+			elif pattern == 34:
+				RunwayControl.twinkleAllLightNodes()
+				RunwayControl.twinkleOneFlame()
+			elif pattern == 35:
+				RunwayControl.lightAndFireChaserLeftReverse()
+				RunwayControl.lightAndFireChaserRight()
 			else:
 				log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 13 #set to something sane

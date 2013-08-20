@@ -53,6 +53,7 @@ pixelBuffer = []
 #colors
 pixelWhite = [255,255,255]
 pixelBlue = [0,255,0]
+pixelHalfBlue = [0,128,0]
 pixelPink = [255,255,0]
 pixelYellow = [255,0,255]
 pixelRed = [255,0,0]
@@ -847,7 +848,12 @@ def changeTick(n):
 def changeLightFadeTime(n):
 	global rcLightFadeOutTime
 	rcLightFadeOutTime = max(min(n, 10.0), 0)
-	print "RunwayControl - light fade time is now {0}".format(rcLightFadeOutTime)
+	print "RunwayControl - light fade out is now {0}".format(rcLightFadeOutTime)
+
+def changeLightFadeInTime(n):
+	global rcLightFadeInTime
+	rcLightFadeInTime = max(min(n, 2.0), 0)
+	print "RunwayControl - light fade in is now {0}".format(rcLightFadeInTime)
 
 def changeLightDuration(n):
 	global rcLightDuration
@@ -898,6 +904,8 @@ def changeColor(c):
 	elif c == "checker":
 		setColorMap("checker")
 		rcColorMapEnabled = True
+	elif c == "halfBlue":
+		pixelOn = pixelHalfBlue
 	else:
 		print "RunwayControl - WARNING: Unknown color " + c
 		pixelOn = pixelBlue

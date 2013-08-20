@@ -1,0 +1,69 @@
+# name in [brackets] can be anything, but must be UNIQUE
+# time is in seconds
+# patterns 0-38
+# colors: blue, white, red, yellow, green, pink, random, rainbow, eq, checker
+# minimum tick = 0.01
+# ld is "light duration" (how long light stays on).
+#     Note that ld, fadeout and fadein are additive. So setting them all the 1.0 means the light is visible for 3.0 seconds.
+# lightgap is only used by patterns 8, 14
+
+[lightbounce]
+time=20
+pattern=39
+color=blue
+tick=0.05
+ld=0.02
+fadeout=0
+fadein=0
+lightgap=3
+
+[watery]
+time=7
+pattern=8
+color=checker
+tick=0.6
+ld=0.02
+fadeout=1.0
+fadein=0.5
+lightgap=5
+
+[blue chaser]
+time=2
+pattern=13
+color=pink
+tick=0.05
+ld=0.02
+fadeout=0
+fadein=0
+lightgap=3
+
+[random color chaser]
+time=2
+pattern=13
+color=random
+tick=0.05
+ld=0.02
+fadeout=0
+fadein=0
+lightgap=3
+
+[lightning]
+time=3
+pattern=38
+color=blue
+tick=0.1
+ld=0.02
+fadeout=0
+fadein=0
+lightgap=3
+
+[rabbits]
+time=7
+pattern=15
+color=blue
+tick=0.01
+ld=0.02
+fadeout=0
+fadein=0
+lightgap=3
+

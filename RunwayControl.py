@@ -130,8 +130,8 @@ def createCamTestRig(ledStrip):
 	return events
 
 def sharedCreate(ledStrip):
-	print "nodeMap: ({0})".format(len(nodeMap))
-	print nodeMap
+	#print "nodeMap: ({0})".format(len(nodeMap))
+	#print nodeMap
 	
 	#light addresses
 	for	i in range(0,len(nodeMap)):
@@ -143,28 +143,28 @@ def sharedCreate(ledStrip):
 		if nodeMap[i] == 'F':
 			flameNodesAll.append(i)
 			
-	log_event("Map contains {0} light nodes...".format(len(lightNodesAll)))
-	print '\nlightNodesAll:'
-	print lightNodesAll
-	log_event("Map contains {0} flame nodes...".format(len(flameNodesAll)))
-	print '\nflameNodesAll:'
-	print flameNodesAll
+	#log_event("Map contains {0} light nodes...".format(len(lightNodesAll)))
+	#print '\nlightNodesAll:'
+	#print lightNodesAll
+	#log_event("Map contains {0} flame nodes...".format(len(flameNodesAll)))
+	#print '\nflameNodesAll:'
+	#print flameNodesAll
 	
 	#logical lights
 	for i in range(0, len(lightNodesAll), 3):
 		lightsAll.append([lightNodesAll[i],lightNodesAll[i+1],lightNodesAll[i+2]])
 	
-	print '\nlightsAll ({0}):'.format(len(lightsAll))
-	for i in range(0, len(lightsAll)):
-		print 'Light {0}: '.format(i + 1) + str(lightsAll[i])
-		#print lightsAll[i]
+	#print '\nlightsAll ({0}):'.format(len(lightsAll))
+	#for i in range(0, len(lightsAll)):
+		#print 'Light {0}: '.format(i + 1) + str(lightsAll[i])
+		##print lightsAll[i]
 	
 	#left and right side lights
 	global lightNodesPerSide, lightsPerSide
 	lightNodesPerSide = len(lightNodesAll)/2
 	lightsPerSide = lightNodesPerSide/3
-	print '\nlightNodesPerSide = {0} nodes'.format(lightNodesPerSide)
-	print '\nlightsPerSide = {0} lights'.format(lightsPerSide)
+	#print '\nlightNodesPerSide = {0} nodes'.format(lightNodesPerSide)
+	#print '\nlightsPerSide = {0} lights'.format(lightsPerSide)
 	
 	for i in range(0,lightNodesPerSide):	
 		lightNodesLeft.append(lightNodesAll[i])
@@ -173,17 +173,17 @@ def sharedCreate(ledStrip):
 		
 	lightNodesRight.reverse()
 		
-	log_event("Left side has {0} light nodes...".format(len(lightNodesLeft)))
-	print '\nlightNodesLeft:'
-	print lightNodesLeft
-	log_event("Right side has {0} light nodes...".format(len(lightNodesRight)))
-	print '\nlightNodesRight:'
-	print lightNodesRight
+	#log_event("Left side has {0} light nodes...".format(len(lightNodesLeft)))
+	#print '\nlightNodesLeft:'
+	#print lightNodesLeft
+	#log_event("Right side has {0} light nodes...".format(len(lightNodesRight)))
+	#print '\nlightNodesRight:'
+	#print lightNodesRight
 	
 	#left and right side flames	
 	global flameNodesPerSide, flamesPerSide
 	flameNodesPerSide = len(flameNodesAll)/2
-	print '\nflameNodesPerSide = {0} nodes'.format(flameNodesPerSide)
+	#print '\nflameNodesPerSide = {0} nodes'.format(flameNodesPerSide)
 
 	for i in range(0,flameNodesPerSide):
 		flameNodesLeft.append(flameNodesAll[i])
@@ -192,12 +192,12 @@ def sharedCreate(ledStrip):
 		
 	flameNodesRight.reverse()
 		
-	log_event("Left side has {0} flame nodes...".format(len(flameNodesLeft)))
-	print '\nflameNodesLeft:'
-	print flameNodesLeft
-	log_event("Right side has {0} flame nodes...".format(len(flameNodesRight)))
-	print '\nflameNodesRight:'
-	print flameNodesRight
+	#log_event("Left side has {0} flame nodes...".format(len(flameNodesLeft)))
+	#print '\nflameNodesLeft:'
+	#print flameNodesLeft
+	#log_event("Right side has {0} flame nodes...".format(len(flameNodesRight)))
+	#print '\nflameNodesRight:'
+	#print flameNodesRight
 	
 	constructLightsAndFireArrays()
 
@@ -226,8 +226,8 @@ def constructLightsAndFireArrays():
 		else:
 			pass
 
-	print '\nlightsAndFire ({0}):'.format(len(lightsAndFire))
-	print lightsAndFire
+	#print '\nlightsAndFire ({0}):'.format(len(lightsAndFire))
+	#print lightsAndFire
 	
 	for i in range(0, len(lightsAndFire)):
 		if i < len(lightsAndFire) / 2:
@@ -237,13 +237,13 @@ def constructLightsAndFireArrays():
 	
 	lightsAndFireRight.reverse()
 	
-	print '\nlightsAndFireLeft ({0}):'.format(len(lightsAndFireLeft))
-	print lightsAndFireLeft
-	print '\nlightsAndFireRight ({0}):'.format(len(lightsAndFireRight))
-	print lightsAndFireRight
+	#print '\nlightsAndFireLeft ({0}):'.format(len(lightsAndFireLeft))
+	#print lightsAndFireLeft
+	#print '\nlightsAndFireRight ({0}):'.format(len(lightsAndFireRight))
+	#print lightsAndFireRight
 
 def setColorMap(s):
-	print 'RunwayControl - setting color map to: ' + s
+	#print 'RunwayControl - setting color map to: ' + s
 
 	global lightColorsAll, lightColorsLeft, lightColorsRight
 	lightColorsAll = []
@@ -256,15 +256,15 @@ def setColorMap(s):
 		if s == "eq":
 			segmentLength = (len(lightsAll) / 2) / 3
 			if i < segmentLength:
-				#print '{0} - segment 1'.format(i)
+				##print '{0} - segment 1'.format(i)
 				lightColorsLeft.append(pixelGreen)
 				lightColorsRight.append(pixelGreen)
 			elif i <= (segmentLength * 2):
-				#print '{0} - segment 2'.format(i)
+				##print '{0} - segment 2'.format(i)
 				lightColorsLeft.append(pixelYellow)
 				lightColorsRight.append(pixelYellow)
 			else:
-				#print '{0} - segment 3'.format(i)
+				##print '{0} - segment 3'.format(i)
 				lightColorsLeft.append(pixelRed)
 				lightColorsRight.append(pixelRed)
 		elif s == 'checker':
@@ -273,30 +273,29 @@ def setColorMap(s):
 				lightColorsRight.append(pixelGreen)
 				b = False
 			else:
-				lightColorsLeft.append(pixelWhite)
-				lightColorsRight.append(pixelWhite)	
+				lightColorsLeft.append(pixelBlue)
+				lightColorsRight.append(pixelBlue)
 				b = True
 		else:
 			segmentLength = (len(lightsAll) / 2) / 3
 			if i < segmentLength:
-				#print '{0} - segment 1'.format(i)
+				##print '{0} - segment 1'.format(i)
 				lightColorsLeft.append(pixelGreen)
 				lightColorsRight.append(pixelGreen)
 			elif i <= (segmentLength * 2):
-				#print '{0} - segment 2'.format(i)
-				lightColorsLeft.append(pixelPink)
-				lightColorsRight.append(pixelPink)
+				##print '{0} - segment 2'.format(i)
+				lightColorsLeft.append(pixelRed)
+				lightColorsRight.append(pixelRed)
 			else:
-				#print '{0} - segment 3'.format(i)
+				##print '{0} - segment 3'.format(i)
 				lightColorsLeft.append(pixelBlue)
 				lightColorsRight.append(pixelBlue)
 	lightColorsRight.reverse()
-	global lightColorsAll
 	lightColorsAll = lightColorsLeft + lightColorsRight
 
-	print 'lightColorsAll:'
-	for i in range(0, len(lightColorsAll)):
-		print '{0} - [{1},{2},{3}]'.format(i, lightColorsAll[i][0], lightColorsAll[i][1], lightColorsAll[i][2])
+	#print 'lightColorsAll:'
+	#for i in range(0, len(lightColorsAll)):
+		#print '{0} - [{1},{2},{3}]'.format(i, lightColorsAll[i][0], lightColorsAll[i][1], lightColorsAll[i][2])
 
 def showNode(n):
 	if checkTick1():
@@ -415,6 +414,37 @@ def chaseLightDual():
 			else:
 				pass
 		rcIndex1 += 1
+
+def chaseLightDualBounce():
+	#light dual chaser with bounce
+	global rcIndex1, rcBool1
+	if checkTick1():
+		if rcBool1 == True:
+			if rcIndex1 >= len(lightsAll)/2:
+				rcBool1 = False
+			for i in range(0,len(lightsAll)/2):
+				if i == rcIndex1:
+					leftI = i
+					rightI = (len(lightsAll) - 1) - i
+					activateLight(leftI)
+					activateLight(rightI)
+				else:
+					pass
+			if rcBool1 == True:		
+				rcIndex1 += 1
+		else:
+			if rcIndex1 <= 0:
+				rcBool1 = True
+			for i in range(0,len(lightsAll)/2):
+				if i == rcIndex1:
+					leftI = i
+					rightI = (len(lightsAll) - 1) - i
+					activateLight(leftI)
+					activateLight(rightI)
+				else:
+					pass
+			if rcBool1 == False:
+				rcIndex1 -= 1
 
 def chaseMultiLightDual(n):
 	#light dual chaser, every n lights
@@ -911,19 +941,13 @@ def changeColor(c):
 		pixelOn = pixelBlue
 
 def getRandomColor():
-	i = random.randint(0,5)
+	i = random.randint(0,2)
 	if i == 0:
 		return pixelBlue
 	elif i == 1:
-		return pixelWhite
-	elif i == 2:
 		return pixelRed
-	elif i == 3:
+	elif i == 2:
 		return pixelGreen
-	elif i == 4:
-		return pixelYellow
-	elif i == 5:
-		return pixelPink
 	else:
 		return pixelBlue
 	

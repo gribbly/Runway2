@@ -30,9 +30,12 @@ clearCounter = 0
 appConnectTimer = -1
 appConnected = False
 
+configList=[]
+
 import sys
 import time
 import random
+import ConfigParser
 if fakeMode == False:
 	from LedStrip_WS2801 import LedStrip_WS2801
 else:
@@ -58,66 +61,60 @@ def log_event(msg):
 	print format(time.time()) + ": " + msg
 	pass
 
-def changePreset(preset):
-	global presetIndex, pattern, lightGap
-	print 'Flasher.py - changePreset: {0}'.format(preset)
-	presetIndex = preset
-	if presetIndex == 0: #watery
-		pattern = 8
-		RunwayControl.changeColor("blue")
-		RunwayControl.changeTick(0.5)
-		RunwayControl.changeLightDuration(0.02)
-		RunwayControl.changeLightFadeTime(1.0)
-		RunwayControl.changeLightFadeInTime(0.5)
-	elif presetIndex == 1: #basic dual chaser, blue
-		pattern = 13
-		RunwayControl.changeColor("blue")
-		RunwayControl.changeTick(0.05)
-		RunwayControl.changeLightDuration(0.02)
-		RunwayControl.changeLightFadeTime(0)
-		RunwayControl.changeLightFadeInTime(0)
-	elif presetIndex == 2: #basic dual chaser, random color
-		pattern = 13
-		RunwayControl.changeColor("random")
-		RunwayControl.changeTick(0.05)
-		RunwayControl.changeLightDuration(0.02)
-		RunwayControl.changeLightFadeTime(0)
-		RunwayControl.changeLightFadeInTime(0)
-	elif presetIndex == 3: #lighting sides
-		pattern = 38
-		RunwayControl.changeColor("blue")
-		RunwayControl.changeTick(0.1)
-		RunwayControl.changeLightDuration(0.02)
-		RunwayControl.changeLightFadeTime(0)
-		RunwayControl.changeLightFadeInTime(0)
-	elif presetIndex == 4: #rabbits
-		pattern = 15
-		RunwayControl.changeColor("blue")
-		RunwayControl.changeTick(0.01)
-		RunwayControl.changeLightDuration(0.02)
-		RunwayControl.changeLightFadeTime(0)
-		RunwayControl.changeLightFadeInTime(0)
-	elif presetIndex == 4: #rabbits
-		pattern = 15
-		RunwayControl.changeColor("blue")
-		RunwayControl.changeTick(0.01)
-		RunwayControl.changeLightDuration(0.02)
-		RunwayControl.changeLightFadeTime(0)
-		RunwayControl.changeLightFadeInTime(0)
-	else:
-		pattern = 31
-		RunwayControl.changeColor("pink")
-		RunwayControl.changeTick(0.1)
-		RunwayControl.changeLightDuration(0.1)	
-		RunwayControl.changeLightFadeTime(1.0)
-		RunwayControl.changeLightFadeInTime(0)
-		presetIndex = 0
+def read_config():
+	global configDictionary
+	print 'Flasher.py - read_config START'
+	config = ConfigParser.RawConfigParser()
+	config.read('Config/Config.txt')
+	for s in config.sections():
+		print s
+		items = config.items(s)
+		configList.append(items)
 		
+	print 'Flasher.py - read_config END'
+
+def changePreset(preset):
+	global presetIndex, presetTick, nextPresetTick, pattern, lightGap
+	print '\nFlasher.py - changePreset: {0}'.format(preset)
+
+	presetIndex = preset
+		
+	if presetIndex > len(configList) -1:
+		print 'Flasher.py - bad preset number {0}. Max is {1}'.format(presetIndex, len(configList) -1)
+		presetIndex = 0
+		return None	
+
+	presetList = configList[presetIndex]
+	
+	for k,v in presetList:
+		if k == 'time':
+			presetTick = float(v)
+			nextPresetTick = time.time() + presetTick
+			print 'Flasher.py - preset lasts for: {0}s'.format(presetTick)
+			
+		if k == 'pattern':
+			pattern = int(v)
+		if k == 'color':
+			RunwayControl.changeColor(str(v))
+		if k == 'tick':
+			RunwayControl.changeTick(float(v))
+		if k == 'ld':
+			RunwayControl.changeLightDuration(float(v))
+		if k == 'fadeout':
+			RunwayControl.changeLightFadeTime(float(v))
+		if k == 'fadein':
+			RunwayControl.changeLightFadeInTime(float(v))
+		if k == 'lightgap':
+			lightGap = int(v)
+
 	print 'Flasher.py - pattern is now: {0}'.format(pattern)
+
 
 #START
 f = open('log','w')
 log_event('HELLO WORLD @ {0}'.format(time.time()))
+
+read_config()
 
 if fakeMode == False:
 	log_event('starting in REAL mode')
@@ -134,6 +131,9 @@ RunwayControl.changeFlameDuration(flameDuration)
 RunwayControl.changeLightFadeTime(lightFadeTime)
 RunwayControl.changeColor(startColor)
 RunwayControl.changeAllowFlame(False)
+
+nextFixedTick = 0
+nextPresetTick = 0
 
 pattern = startPattern
 if len(sys.argv) > 1:
@@ -165,9 +165,6 @@ log_event('fixedTick is {0}'.format(fixedTick))
 log_event('adjustableTick is {0}'.format(adjustableTick))
 log_event('pattern is {0}'.format(pattern))
 
-nextFixedTick = 0
-nextPresetTick = 0
-
 log_event('we have {0} ws2801 nodes'.format(ledStrip.nLeds))
 log_event('clear strip @ {0}'.format(time.time()))
 Patterns.clearAll(ledStrip)
@@ -193,6 +190,7 @@ while True:
 			if appConnected == False:
 				appConnected = True
 				RunwayControl.changeAllowFlame(True)
+				RunwayControl.changeFlameDuration(0.05)
 				screenSaverMode = False
 
 			line = line.strip()
@@ -402,6 +400,8 @@ while True:
 				RunwayControl.lightningSync()		
 			elif pattern == 38:
 				RunwayControl.lightningSides()
+			elif pattern == 39:	
+				RunwayControl.chaseLightDualBounce()
 			else:
 				log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 13 #set to something sane

@@ -263,8 +263,8 @@ def setColorMap(s):
 				lightColorsRight.append(pixelGreen)
 			elif i <= (segmentLength * 2):
 				##print '{0} - segment 2'.format(i)
-				lightColorsLeft.append(pixelYellow)
-				lightColorsRight.append(pixelYellow)
+				lightColorsLeft.append(pixelBlue)
+				lightColorsRight.append(pixelBlue)
 			else:
 				##print '{0} - segment 3'.format(i)
 				lightColorsLeft.append(pixelRed)
@@ -888,15 +888,18 @@ def activateLight(i):
 	try:
 		nodeStates[lightsAll[i][0]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 	except:
-		print "activateLight - ERROR: Light {0}, node 0 doesn't exist".format(i)
+		pass
+		#print "activateLight - ERROR: Light {0}, node 0 doesn't exist".format(i)
 	try:
 		nodeStates[lightsAll[i][1]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 	except:
-		print "activateLight - ERROR: Light {0}, node 1 doesn't exist".format(i)
+		pass
+		#print "activateLight - ERROR: Light {0}, node 1 doesn't exist".format(i)
 	try:
 		nodeStates[lightsAll[i][2]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 	except:
-		print "activateLight - ERROR: Light {0}, node 2 doesn't exist".format(i)
+		pass
+		#print "activateLight - ERROR: Light {0}, node 2 doesn't exist".format(i)
 
 def activateFlame(i):
 	#print 'RunwayControl - activateFlame {0}'.format(i)
@@ -962,7 +965,7 @@ def update(ledStrip):
 	#time.sleep(0)
 
 def syncIndices():
-	print 'RunwayControl - syncIndices'
+	#print 'RunwayControl - syncIndices'
 	global rcIndex1, rcIndex2, rcIndex3, rcIndex4
 	rcIndex1 = 0
 	rcIndex2 = 0
@@ -970,7 +973,7 @@ def syncIndices():
 	rcIndex4 = 0
 
 def syncIndices2():
-	print 'RunwayControl - hackIndices'
+	#print 'RunwayControl - hackIndices'
 	global rcIndex1, rcIndex2, rcIndex3, rcIndex4
 	rcIndex1 = 0
 	rcIndex2 = 0

@@ -58,7 +58,7 @@ def enqueue_output(out, queue):
 # /queues
 
 def log_event(msg):
-	f.write(format(time.time()) + ": " + msg + "\n")
+	#f.write(format(time.time()) + ": " + msg + "\n")
 	print format(time.time()) + ": " + msg
 	pass
 
@@ -118,7 +118,7 @@ def changePreset(preset):
 		RunwayControl.syncIndices2()
 
 #START
-f = open('log','w')
+#f = open('log','w')
 log_event('HELLO WORLD @ {0}'.format(time.time()))
 
 read_config()

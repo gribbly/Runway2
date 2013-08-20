@@ -30,7 +30,7 @@ lightgap=5
 [blue chaser]
 time=2
 pattern=13
-color=pink
+color=blue
 tick=0.05
 ld=0.02
 fadeout=0

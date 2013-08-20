@@ -1,6 +1,6 @@
 #tweaks
-nodes = 124 #should be 294
-camTestRig = True #should be False
+nodes = 294 #should be 294
+camTestRig = False #should be False
 useRunwayControl = True #should be True
 fakeMode = False #should be False
 noServer = False #should be False

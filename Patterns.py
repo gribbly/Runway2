@@ -158,6 +158,7 @@ def blueWatery(ledStrip, intensity):
 		p = int(p)
 		#print p
 		ledStrip.setPixel(i,[0, p, 0])
+		ledStrip.update()
 
 def lightChase(ledStrip):
 	global sharedIndex

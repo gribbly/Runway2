@@ -8,7 +8,7 @@ screenSaverMode = True #should be True
 
 #starting values for realtime vars (app can change these)
 startColor = "blue"
-startPattern = 15 #tbd
+startPattern = 45 #tbd
 adjustableTick = 0.25 #starting value
 lightDuration = 0.05 #should be 0.05
 flameDuration = 0.05 #should be 0.05
@@ -415,6 +415,17 @@ while True:
 			elif pattern == 40:
 				RunwayControl.lightAndFireChaserLeftBounce()
 				RunwayControl.lightAndFireChaserRightBounce()
+			elif pattern == 41:
+				RunwayControl.chaseFlames()
+			elif pattern == 42:
+				RunwayControl.chaseFlamesDual()
+			elif pattern == 43:
+				RunwayControl.chaseFlamesDualReverse()
+			elif pattern == 44:
+				RunwayControl.chaseFlamesDualBounce()
+			elif pattern == 45:
+				RunwayControl.chaseLightDualBounce()
+				RunwayControl.chaseFlamesDualBounce()
 			else:
 				log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 13 #set to something sane

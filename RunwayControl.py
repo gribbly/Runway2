@@ -776,6 +776,76 @@ def lightningSides():
 			else:
 				pass
 
+def chaseFlames():
+	global rcIndex1
+	if checkTick1():
+		if rcIndex1 > len(flameNodesAll):
+			rcIndex1 = 0
+		for i in range(0,len(flameNodesAll)):
+			if i == rcIndex1:
+				nodeStates[flameNodesAll[i]] = rcFlameDuration
+		rcIndex1 += 1
+
+def chaseFlamesDual():
+	global rcIndex2
+	if checkTick2():
+		if rcIndex2 > len(flameNodesAll)/2:
+			rcIndex2 = 0
+		for i in range(0,len(flameNodesAll)/2):
+			if i == rcIndex2:
+				leftI = i
+				rightI = (len(flameNodesAll) - 1) - i
+				activateFlame(leftI + 1)
+				activateFlame(rightI + 1)
+			else:
+				pass
+		rcIndex2 += 1
+		
+def chaseFlamesDualReverse():
+	global rcIndex2
+	if checkTick2():
+		if rcIndex2 < 0:
+			rcIndex2 = len(flameNodesAll)/2
+		for i in range(0,len(flameNodesAll)/2):
+			if i == rcIndex2:
+				leftI = i
+				rightI = (len(flameNodesAll) - 1) - i
+				activateFlame(leftI + 1)
+				activateFlame(rightI + 1)
+			else:
+				pass
+		rcIndex2 -= 1
+
+def chaseFlamesDualBounce():
+	global rcIndex2, rcBool2
+	if checkTick2():
+		if rcBool2 == True:
+			if rcIndex2 > (len(flameNodesAll)/2) -1:
+				rcBool2 = False
+			for i in range(0,len(flameNodesAll)/2):
+				if i == rcIndex2:
+					leftI = i
+					rightI = (len(flameNodesAll) - 1) - i
+					activateFlame(leftI + 1)
+					activateFlame(rightI + 1)
+				else:
+					pass
+			if rcBool2 == True:			
+				rcIndex2 += 1
+		else:
+			if rcIndex2 < 0:
+				rcBool2 = True
+			for i in range(0,len(flameNodesAll)/2):
+				if i == rcIndex2:
+					leftI = i
+					rightI = (len(flameNodesAll) - 1) - i
+					activateFlame(leftI + 1)
+					activateFlame(rightI + 1)
+				else:
+					pass
+			if rcBool2 == False:					
+				rcIndex2 -= 1			
+
 def clear():
 	for i in range(0,len(nodeMap)):
 		nodeStates[i] = 0

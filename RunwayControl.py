@@ -41,6 +41,7 @@ rcFlameDuration = 0.05
 rcLightFadeInTime = 0
 rcLightFadeOutTime = 0.5
 rcBool1 = False
+rcBool2 = False
 rcIndex1 = 0
 rcIndex2 = 0
 rcIndex3 = 0
@@ -640,6 +641,76 @@ def lightAndFireChaserRightReverse():
 					rcIndex2 -= 1
 		rcIndex2 -= 1
 
+def lightAndFireChaserLeftBounce():
+	global rcIndex1, rcBool1
+	chaseLength = len(lightsAndFireLeft) - 1	
+	if checkTick1():
+		if rcBool1 == True:
+			if rcIndex1 > chaseLength:
+				rcBool1 = False	
+			for i in range(0,chaseLength):
+				if i == rcIndex1:
+					if lightsAndFireLeft[i][0] == 'L':
+						activateLight(lightsAndFireLeft[i][1])
+
+					#if next index is fire, light it now and skip next node
+					if lightsAndFireLeft[i + 1][0] == 'F':
+						activateFlame(lightsAndFireLeft[i + 1][1] + 1)
+						rcIndex1 += 1
+			if rcBool1 == True:
+				rcIndex1 += 1
+		else:
+			if rcIndex1 < 0:
+				rcBool1 = True
+			for i in range(0,chaseLength):
+				if i == rcIndex1:
+					if lightsAndFireLeft[i][0] == 'L':
+						activateLight(lightsAndFireLeft[i][1])
+
+					#if this index is fire, light it and next light now
+					#then skip ahead by 1
+					if lightsAndFireLeft[i][0] == 'F':
+						activateFlame(lightsAndFireLeft[i][1] + 1)
+						activateLight(lightsAndFireLeft[i - 1][1])
+						rcIndex1 -= 1
+			if rcBool1 == False:
+				rcIndex1 -= 1
+
+def lightAndFireChaserRightBounce():
+	global rcIndex2, rcBool2
+	chaseLength = len(lightsAndFireRight) - 1	
+	if checkTick2():
+		if rcBool2 == True:
+			if rcIndex2 > chaseLength:
+				rcBool2 = False
+			for i in range(0,chaseLength):
+				if i == rcIndex2:
+					if lightsAndFireRight[i][0] == 'L':
+						activateLight(lightsAndFireRight[i][1])
+
+					#if this index is fire, light it and next light now
+					#then skip ahead by 1
+					if lightsAndFireRight[i][0] == 'F':
+						activateFlame(lightsAndFireRight[i][1] + 1)
+						activateLight(lightsAndFireRight[i + 1][1])
+						rcIndex2 += 1
+			if rcBool2 == True:
+				rcIndex2 += 1
+		else:
+			if rcIndex2 < 0:
+				rcBool2 = True
+			for i in range(0,chaseLength):
+				if i == rcIndex2:
+					if lightsAndFireRight[i][0] == 'L':
+						activateLight(lightsAndFireRight[i][1])
+
+					#if next index is fire, light it now and skip next node
+					if lightsAndFireRight[i - 1][0] == 'F':
+						activateFlame(lightsAndFireRight[i - 1][1] + 1)
+						rcIndex2 -= 1
+			if rcBool2 == False:
+				rcIndex2 -= 1
+
 def twinkleAllFlames():
 	if checkTick2():
 		for i in range(0,len(flameNodesAll)):
@@ -819,51 +890,17 @@ def update(ledStrip):
 
 	ledStrip.update()
 	#time.sleep(0)
-	
-def update2(ledStrip):
-	#ignores color maps (for now)
-	#experiment with "render and perturb"
-
-	global pixelBuffer, rcLightFadeOutTime, pixelOn, pixelFlame
-	for i in xrange(0,len(nodeMap)):
-		if nodeStates[i] > rcLightFadeOutTime:
-			if nodeMap[i] == 'F':
-				pixelBuffer[i] = pixelFlame
-			else:
-				pixelBuffer[i] = pixelOn
-
-		elif nodeStates[i] > 0 and nodeStates[i] <= rcLightFadeOutTime:
-			if nodeMap[i] == 'F':
-				pixelBuffer[i] = pixelFlame
-			else:
-				r,g,b = pixelOn
-				p = int(nodeStates[i]/rcLightFadeOutTime * 255)
-				if r > 0:
-					r = p
-				if g > 0:
-					g = p
-				if b > 0:
-					b = p
-				pixelBuffer[i] = [r,g,b]
-		else:
-			pixelBuffer[i] = pixelOff
-
-	t = time.clock()
-	for i in xrange(0, len(pixelBuffer)):
-		if nodeMap[i] in ['1', '2', '3']:
-			r,g,b = pixelBuffer[i]
-			p = math.sin(t + i)
-			p = abs(p)
-			r *= p
-			g *= p
-			b *= p
-			pixelBuffer[i] = [r,g,b] #todo: this doesn't work
-		ledStrip.setPixel(i, pixelBuffer[i])
-
-	ledStrip.update()
 
 def syncIndices():
 	print 'RunwayControl - syncIndices'
+	global rcIndex1, rcIndex2, rcIndex3, rcIndex4
+	rcIndex1 = 0
+	rcIndex2 = 0
+	rcIndex3 = 0
+	rcIndex4 = 0
+
+def syncIndices2():
+	print 'RunwayControl - hackIndices'
 	global rcIndex1, rcIndex2, rcIndex3, rcIndex4
 	rcIndex1 = 0
 	rcIndex2 = 0
@@ -902,12 +939,9 @@ def changeAllowFlame(b):
 	global rcAllowFire, pixelFlame, pixelWhite, pixelRed, pixelOff
 	rcAllowFire = b
 	if rcAllowFire == True:
-		pixelFlame = pixelWhite
-	else:
-		#debugging!
 		pixelFlame = pixelRed
-		
-		#pixelFlame = pixelOff
+	else:
+		pixelFlame = pixelOff
 	print "RunwayControl - flame control = " + str(rcAllowFire)
 	
 def changeColor(c):

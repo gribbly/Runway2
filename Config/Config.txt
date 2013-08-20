@@ -20,7 +20,7 @@ lightgap=3
 [watery]
 time=7
 pattern=8
-color=checker
+color=blue
 tick=0.6
 ld=0.02
 fadeout=1.0

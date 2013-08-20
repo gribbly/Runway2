@@ -1,6 +1,6 @@
 #tweaks
-nodes = 294 #should be 294
-camTestRig = False #should be False
+nodes = 124 #should be 294
+camTestRig = True #should be False
 useRunwayControl = True #should be True
 fakeMode = False #should be False
 noServer = False #should be False
@@ -29,6 +29,7 @@ debugTickCounter = 0
 clearCounter = 0
 appConnectTimer = -1
 appConnected = False
+flBool1 = False #used as simple pattern switching state machine
 
 configList=[]
 
@@ -111,6 +112,10 @@ def changePreset(preset):
 
 	print 'Flasher.py - pattern is now: {0}'.format(pattern)
 
+	if pattern in [20,21,22,35]:
+		RunwayControl.syncIndices()
+	if pattern in [40]:
+		RunwayControl.syncIndices2()
 
 #START
 f = open('log','w')
@@ -224,6 +229,8 @@ while True:
 						pattern = int(command[1].rstrip())
 						if pattern in [20,21,22,35]:
 							RunwayControl.syncIndices()
+						if pattern in [40]:
+							RunwayControl.syncIndices2()
 						if useRunwayControl == False:
 							Patterns.resetSharedVars()
 					except:
@@ -405,6 +412,9 @@ while True:
 				RunwayControl.lightningSides()
 			elif pattern == 39:	
 				RunwayControl.chaseLightDualBounce()
+			elif pattern == 40:
+				RunwayControl.lightAndFireChaserLeftBounce()
+				RunwayControl.lightAndFireChaserRightBounce()
 			else:
 				log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 13 #set to something sane

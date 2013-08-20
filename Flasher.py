@@ -62,7 +62,7 @@ def log_event(msg):
 	pass
 
 def read_config():
-	global configDictionary
+	global configList, presetCount
 	print 'Flasher.py - read_config START'
 	config = ConfigParser.RawConfigParser()
 	config.read('Config/Config.txt')
@@ -70,6 +70,8 @@ def read_config():
 		print s
 		items = config.items(s)
 		configList.append(items)
+		
+	presetCount = len(configList)
 		
 	print 'Flasher.py - read_config END'
 
@@ -79,8 +81,8 @@ def changePreset(preset):
 
 	presetIndex = preset
 		
-	if presetIndex > len(configList) -1:
-		print 'Flasher.py - bad preset number {0}. Max is {1}'.format(presetIndex, len(configList) -1)
+	if presetIndex > presetCount -1:
+		print 'Flasher.py - bad preset number {0}. Max is {1}'.format(presetIndex, presetCount -1)
 		presetIndex = 0
 		return None	
 
@@ -309,6 +311,7 @@ while True:
 				RunwayControl.changeAllowFlame(False)
 				screenSaverMode = True
 				presetIndex = 0
+				nextPresetTick = 0
 
 		if useRunwayControl == True:
 			RunwayControl.decrementDurations(fixedTick)

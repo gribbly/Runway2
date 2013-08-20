@@ -8,10 +8,10 @@
 # lightgap is only used by patterns 8, 14
 
 [lightbounce]
-time=20
+time=5
 pattern=39
 color=blue
-tick=0.05
+tick=0.02
 ld=0.02
 fadeout=0
 fadein=0

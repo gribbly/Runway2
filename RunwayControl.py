@@ -47,6 +47,7 @@ rcIndex3 = 0
 rcIndex4 = 0
 rcNextEvent1 = 0
 rcColorMapEnabled = False
+rcRainbowMode = False
 rcAllowFire = False
 pixelBuffer = []
 
@@ -763,7 +764,7 @@ def activateFlame(i):
 	nodeStates[flameNodesAll[requestedFlameNode]] = rcFlameDuration
 
 def update(ledStrip):
-	global rcLightFadeOutTime, rcLightFadeInTime, pixelOn, pixelFlame, lightColorsAll, rcColorMapEnabled
+	global rcLightFadeOutTime, rcLightFadeInTime, pixelOn, pixelFlame, lightColorsAll, rcColorMapEnabled, rcRainbowMode
 
 	effectiveLightDuration = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 
@@ -795,6 +796,8 @@ def update(ledStrip):
 			if nodeMap[i] == 'F':
 				ledStrip.setPixel(i, pixelFlame)
 			else:
+				if rcRainbowMode == True:
+					pixelOn = getRandomColor()
 				ledStrip.setPixel(i, pixelOn)
 		elif nodeStates[i] > 0 and nodeStates[i] <= rcLightFadeOutTime:
 			if nodeMap[i] == 'F':
@@ -908,9 +911,10 @@ def changeAllowFlame(b):
 	print "RunwayControl - flame control = " + str(rcAllowFire)
 	
 def changeColor(c):
-	global pixelOn, rcColorMapEnabled
+	global pixelOn, rcColorMapEnabled, rcRainbowMode
 	print "RunwayControl - switching color to " + c
 	rcColorMapEnabled = False
+	rcRainbowMode = False
 	if c == "default" or c == "blue":
 		pixelOn = pixelBlue
 	elif c == "white":
@@ -926,8 +930,9 @@ def changeColor(c):
 	elif c == "random":
 		pixelOn = getRandomColor()
 	elif c == "rainbow":
-		setColorMap("rainbow")
-		rcColorMapEnabled = True
+		rcRainbowMode = True
+		changeLightFadeTime(0)
+		changeLightFadeInTime(0)
 	elif c == "eq":
 		setColorMap("eq")
 		rcColorMapEnabled = True

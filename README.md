@@ -57,6 +57,8 @@ Protocol
 
 **pattern=n**
 
+**preset=n** //switch to a preset (same presets as used by screensaver mode)
+
 **tick=n** //pattern tempo. Clamped to 0.01666666666667 - 20.0
 
 **light=n** or **l=n** //specific light
@@ -75,11 +77,11 @@ Protocol
 
 **color=<color>** //change lights to this color. Supported: default, blue, white, red, green, yellow, pink, random (picks a random color), eq (eq color scheme!)
 
-**eq=n** //current EQ level (send volume from mic). Expects a number between 0 and 42 (number of lights on one side). Use with "fillUpLightsDualEq".
-
-**eql=n,eqr=n** //NOT YET IMPLEMENTED. Use for stereo EQ level.
+**eql=n** // //current EQ level (send volume from mic). Expects a number between 0 and 42 (number of lights on one side). Use with "fillUpLightsDualEq".
 
 **clear=1** //send to instantly turn everything off
+
+**clear=1** //send to go into panic mode (resets everything, forces flame control off)
 
 If we need to handle multiple parameters per message, comma separate them:
 

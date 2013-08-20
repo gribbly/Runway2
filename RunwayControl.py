@@ -511,6 +511,18 @@ def fillUpLightsDualEq(e):
 			else:
 				pass
 
+def fillUpLightsDualEqFake():
+	if checkTick1():
+		e = random.randint(0,len(lightsAll)/2)
+		for i in range(0,len(lightsAll)/2):
+			if i <= e:
+				leftI = i
+				rightI = (len(lightsAll) - 1) - i
+				activateLight(leftI)
+				activateLight(rightI)
+			else:
+				pass
+
 def lightAndFireChaserSimple():
 	global rcIndex1
 	if checkTick1():
@@ -637,6 +649,27 @@ def twinkleAllLightNodes():
 		for i in range(0,len(lightNodesAll)):
 			if coinToss(5) == True:
 				nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
+			else:
+				pass
+
+def lightningSync():
+	if checkTick1():
+		if coinToss(3) == True:
+			for i in range(0,len(lightNodesAll)):
+				nodeStates[lightNodesAll[i]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
+			else:
+				pass
+
+def lightningSides():
+	if checkTick1():
+		if coinToss(3) == True:
+			for i in range(0,len(lightNodesLeft)):
+				nodeStates[lightNodesLeft[i]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
+			else:
+				pass
+		if coinToss(3) == True:
+			for i in range(0,len(lightNodesRight)):
+				nodeStates[lightNodesRight[i]] = rcLightDuration + rcLightFadeOutTime + rcLightFadeInTime
 			else:
 				pass
 

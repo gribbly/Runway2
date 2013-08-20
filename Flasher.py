@@ -193,7 +193,7 @@ while True:
 						RunwayControl.changeColor(str(command[1].rstrip()))
 					except:
 						log_event('Bad color command: ' + str(line))
-				elif command[0] == 'eq':
+				elif command[0] == 'eql':
 					try:
 						lightEq = (int(command[1].rstrip()))
 					except:
@@ -266,8 +266,6 @@ while True:
 			elif pattern == 17:
 				RunwayControl.fillUpLightsDual()
 			elif pattern == 18:
-				if camTestRig == True:
-					lightEq = random.randint(0,18)
 				RunwayControl.fillUpLightsDualEq(lightEq)
 			elif pattern == 19:
 				RunwayControl.lightAndFireChaserSimple()
@@ -310,6 +308,12 @@ while True:
 			elif pattern == 35:
 				RunwayControl.lightAndFireChaserLeftReverse()
 				RunwayControl.lightAndFireChaserRight()
+			elif pattern == 36:
+				RunwayControl.fillUpLightsDualEqFake()		
+			elif pattern == 37:
+				RunwayControl.lightningSync()		
+			elif pattern == 38:
+				RunwayControl.lightningSides()
 			else:
 				log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 13 #set to something sane

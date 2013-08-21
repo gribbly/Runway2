@@ -13,7 +13,7 @@ adjustableTick = 0.25 #starting value
 lightDuration = 0.05 #should be 0.05
 flameDuration = 0.05 #should be 0.05
 lightFadeTime = 0.2
-lightGap = 5
+lightGap = 3
 lightEq = 0
 
 #screensaverMode
@@ -426,6 +426,18 @@ while True:
 			elif pattern == 45:
 				RunwayControl.chaseLightDualBounce()
 				RunwayControl.chaseFlamesDualBounce()
+			elif pattern == 46:
+				RunwayControl.chaseMultiFlamesDual(lightGap)
+			elif pattern == 47:
+				RunwayControl.chaseMultiFlamesDualReverse(lightGap)
+			elif pattern == 48:
+				RunwayControl.chaseMultiFlamesDual(3)
+			elif pattern == 49:
+				RunwayControl.chaseMultiFlamesDualReverse(3)
+			elif pattern == 50:
+				RunwayControl.chaseMultiLight(lightGap)
+			elif pattern == 51:
+				RunwayControl.chaseMultiLight(4)
 			else:
 				log_event('WARNING! bad pattern number {0}'.format(pattern))
 				pattern = 13 #set to something sane

@@ -463,6 +463,20 @@ def chaseMultiLightDual(n):
 			else:
 				pass
 		rcIndex1 += 1
+		
+def chaseMultiLight(n):
+	#light chaser, every n lights
+	global rcIndex1
+	if checkTick1():
+		if rcIndex1 > n - 1:
+			rcIndex1 = 0
+		for i in range(0,(len(lightsAll)) - rcIndex1):
+			if i % n == 0:
+
+				activateLight(i + rcIndex1)
+			else:
+				pass
+		rcIndex1 += 1
 
 def twinkleAllLights():
 	if checkTick1():
@@ -800,7 +814,43 @@ def chaseFlamesDual():
 			else:
 				pass
 		rcIndex2 += 1
-		
+
+def chaseMultiFlamesDual(n):
+	#flames dual chaser, every n flames
+	global rcIndex2
+	if checkTick2():
+		if n > len(flameNodesAll)/2:
+			n = len(flameNodesAll)/2
+		if rcIndex2 > n - 1:
+			rcIndex2 = 0
+		for i in range(0,(len(flameNodesAll)/2) - rcIndex2):
+			if i % n == 0:
+				leftI = i + rcIndex2
+				rightI = ((len(flameNodesAll) - 1) - i) - rcIndex2
+				activateFlame(leftI + 1)
+				activateFlame(rightI + 1)
+			else:
+				pass
+		rcIndex2 += 1
+
+def chaseMultiFlamesDualReverse(n):
+	#reverse flames dual chaser, every n flames
+	global rcIndex2
+	if checkTick2():
+		if n > len(flameNodesAll)/2:
+			n = len(flameNodesAll)/2
+		if rcIndex2 < 0:
+			rcIndex2 = n - 1
+		for i in range(0,(len(flameNodesAll)/2) - rcIndex2):
+			if i % n == 0:
+				leftI = i + rcIndex2
+				rightI = ((len(flameNodesAll) - 1) - i) - rcIndex2
+				activateFlame(leftI + 1)
+				activateFlame(rightI + 1)
+			else:
+				pass
+		rcIndex2 -= 1
+
 def chaseFlamesDualReverse():
 	global rcIndex2
 	if checkTick2():

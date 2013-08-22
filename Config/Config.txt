@@ -7,6 +7,16 @@
 #     Note that ld, fadeout and fadein are additive. So setting them all the 1.0 means the light is visible for 3.0 seconds.
 # lightgap is only used by patterns 8, 14
 
+[duallightchaser]
+time=120
+pattern=13
+color=blue
+tick=0.001
+ld=0.02
+fadeout=0
+fadein=0
+lightgap=3
+
 [lightbounce]
 time=5
 pattern=39

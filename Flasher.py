@@ -1,6 +1,6 @@
 #tweaks
-nodes = 294 #should be 294
-camTestRig = False #should be False
+nodes = 124 #should be 294
+camTestRig = True #should be False
 useRunwayControl = True #should be True
 fakeMode = False #should be False
 noServer = False #should be False
@@ -125,7 +125,8 @@ read_config()
 
 if fakeMode == False:
 	log_event('starting in REAL mode')
-	ledStrip = LedStrip_WS2801("/dev/spidev0.0", nodes)
+	#ledStrip = LedStrip_WS2801_FileBased("/dev/spidev0.0", nodes)
+	ledStrip = LedStrip_WS2801(nodes)
 else:
 	print '*** WARNING: fakeMode is True ***'
 	log_event('starting in FAKE mode')
